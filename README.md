@@ -8,3 +8,6 @@
 - [VSCode](https://code.visualstudio.com/Download)
 - [Teamviewer](https://www.teamviewer.com/en-us/download/windows/)
 - [MusicBee](https://getmusicbee.com/downloads/)
+- Windows Terminal (in the Windows Store)
+- Ubuntu for WSL2 (in the Windows Store)
+- [Oh-My-ZSH](https://ohmyz.sh/#install)
