@@ -11,3 +11,8 @@
 - Windows Terminal (in the Windows Store)
 - Ubuntu for WSL2 (in the Windows Store)
 - [Oh-My-ZSH](https://ohmyz.sh/#install)
+
+## List of important repos
+
+- [KMS for windows and Office volume licenses](https://github.com/kkkgo/KMS_VL_ALL)
+- [Retail to volume license for Office](https://github.com/abbodi1406/C2R-R2V-AIO)
