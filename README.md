@@ -16,9 +16,9 @@
 - [Discord](https://discord.com/brand-new/download)
   - [Direct download](https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x64)
 - [Windows Terminal (in the Windows Store)](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701?activetab=pivot:overviewtab)
-  - ms-windows-store://pdp?productId=9N0DX20HK701&ocid=&cid=&referrer=unistoreweb&scenario=click&webig=7fca188b-8e32-4fdf-8361-83d915035498&muid=34BC034380C86876150B0CD1816369F4&websession=&tduid=
+  - [Direct download](ms-windows-store://pdp?productId=9N0DX20HK701&ocid=&cid=&referrer=unistoreweb&scenario=click&webig=7fca188b-8e32-4fdf-8361-83d915035498&muid=34BC034380C86876150B0CD1816369F4&websession=&tduid=)
 - [Ubuntu for WSL2 (in the Windows Store)](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab)
-  - ms-windows-store://pdp?productId=9NBLGGH4MSV6&ocid=&cid=&referrer=unistoreweb&scenario=click&webig=23d5ea05-aaad-41bc-8f00-80e12bb5b6a5&muid=34BC034380C86876150B0CD1816369F4&websession=&tduid=
+  - [Direct download](ms-windows-store://pdp?productId=9NBLGGH4MSV6&ocid=&cid=&referrer=unistoreweb&scenario=click&webig=23d5ea05-aaad-41bc-8f00-80e12bb5b6a5&muid=34BC034380C86876150B0CD1816369F4&websession=&tduid=)
 - [ZSH](https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH)
   - `apt install zsh`
 - [Oh-My-ZSH](https://ohmyz.sh/#install)
