@@ -23,6 +23,8 @@
   - `apt install zsh`
 - [Oh-My-ZSH](https://ohmyz.sh/#install)
   - `sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
+- [OpenVPN](https://openvpn.net/community-downloads/)
+  - [Direct download](https://swupdate.openvpn.org/community/releases/OpenVPN-2.5.2-I601-amd64.msi)
 
 ## List of important repos
 
