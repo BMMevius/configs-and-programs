@@ -1,0 +1,3 @@
+- git@github.com:zdharma/history-search-multi-word.git
+- https://github.com/zsh-users/zsh-autosuggestions
+- https://github.com/zsh-users/zsh-syntax-highlighting.git
