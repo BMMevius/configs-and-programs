@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker gitignore heroku node npm nvm pip history-search-multi-word)
+plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker gitignore heroku node npm nvm pip history-search-multi-word yarn vscode archlinux)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -101,6 +101,3 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 export PATH=$PATH:/opt/balena-cli
-
-export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
-export LIBGL_ALWAYS_INDIRECT=1
