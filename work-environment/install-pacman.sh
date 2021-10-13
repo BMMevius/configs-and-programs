@@ -94,19 +94,23 @@ echo "Move custom file to used pacman file..."
 mv $new_pacman_file /etc/pacman.conf
 
 echo "Creating user..."
-useradd -mG sudo docker bastiaan
-echo "Give new password for login 'bastiaan'..."
-passwd bastiaan
+username=$(read -rp "Username:")
+useradd -mG sudo docker "$username"
+echo "Give new password for login '$username'..."
+passwd "$username"
+
+echo "Copying .zshrc"
+cp "zsh/.zshrc" "/mnt/home/$username/"
 
 echo "Change default shell to zsh..."
 sudo chsh -s "$(which zsh)"
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/history-search-multi-word
-git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-~/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
+git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/history-search-multi-word
+git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
 
 # Install aurutils
-aurutils_dir="$HOME/aur/aurutils"
+aurutils_dir="/home/$username/aur/aurutils"
 git clone https://aur.archlinux.org/aurutils.git "$aurutils_dir"
 cd "$aurutils_dir"
 makepkg -si
