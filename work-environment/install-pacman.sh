@@ -13,7 +13,11 @@ prompt_confirm() {
   done
 }
 
-prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SSID:")" || echo "No WIFI enabled"
+if [ "$(prompt_confirm "Connect to wifi?")" = 0 ]; then
+    read -rp "SSID: " ssid
+    iwctl station wlan0 connect "$ssid"
+    ping -c 1 google.com
+fi
 
 echo "Copying old pacman.conf to /etc/pacman-old.conf..."
 cp /etc/pacman.conf /etc/pacman-old.conf
