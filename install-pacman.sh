@@ -6,14 +6,14 @@ prompt_confirm() {
   while true; do
     read -r -n 1 -p "${1:-Continue?} [y/n]: " REPLY
     case $REPLY in
-      [yY]) echo ; return 0 ;;
-      [nN]) echo ; return 1 ;;
+      [yY]) echo ; return 1 ;;
+      [nN]) echo ; return 0 ;;
       *) printf " \033[31m %s \n\033[0m" "invalid input"
     esac
   done
 }
 
-if [ "$(prompt_confirm "Connect to wifi?")" = 0 ]; then
+if ! prompt_confirm "Connect to wifi?"; then
     read -rp "SSID: " ssid
     iwctl station wlan0 connect "$ssid"
     ping -c 1 google.com
@@ -23,17 +23,24 @@ echo "Copying old pacman.conf to /etc/pacman-old.conf..."
 cp /etc/pacman.conf /etc/pacman-old.conf
 new_pacman_file=/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
+counter=0
+max=3
 while IFS= read -r line; do
     if [ "$line" = "#[multilib]" ]; then
         echo "[multilib]" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ]; then
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -eq $max ]; then
         echo "Include = /etc/pacman.d/mirrorlist" >>$new_pacman_file
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -lt $max ]; then
+        echo "$line" >>$new_pacman_file
+        ((counter++))
     else
         echo "$line" >>$new_pacman_file
     fi
 done <"/etc/pacman.conf"
 echo "Move custom file to used pacman file..."
 mv $new_pacman_file /etc/pacman.conf
+
+timedatectl set-ntp true
 
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
@@ -101,11 +108,16 @@ echo "Copying old pacman.conf to /etc/pacman-old.conf..."
 cp /mnt/etc/pacman.conf /mnt/etc/pacman-old.conf
 new_pacman_file=/mnt/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
+counter=0
+max=3
 while IFS= read -r line; do
     if [ "$line" = "#[multilib]" ]; then
         echo "[multilib]" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ]; then
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -eq $max ]; then
         echo "Include = /etc/pacman.d/mirrorlist" >>$new_pacman_file
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -lt $max ]; then
+        echo "$line" >>$new_pacman_file
+        ((counter++))
     else
         echo "$line" >>$new_pacman_file
     fi
@@ -118,12 +130,13 @@ username=$(read -rp "Username:")
 arch-chroot /mnt useradd -mG sudo docker "$username"
 echo "Give new password for login '$username'..."
 arch-chroot /mnt passwd "$username"
+echo "bastiaan ALL=(ALL) ALL" >>/mnt/etc/sudoers
 
 echo "Copying .zshrc"
 cp ".zshrc" "/mnt/home/$username/"
 
 echo "Change default shell to zsh..."
-arch-chroot /mnt su - "$username" -c "sudo chsh -s $(which zsh)"
+arch-chroot /mnt su - "$username" -c "sudo -S chsh -s $(which zsh)"
 arch-chroot /mnt su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/history-search-multi-word'
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions'
@@ -139,13 +152,13 @@ echo "Add custom pacman repositoy..."
 printf "[options]\nCacheDir = /var/cache/pacman/pkg\nCacheDir = /var/cache/pacman/custom\nCleanMethod = KeepCurrent\n\n[custom]\nSigLevel = Optional TrustAll\nServer = file:///var/cache/pacman/custom" >/mnt/etc/pacman.d/custom
 echo "Include = /etc/pacman.d/custom" >>/mnt/etc/pacman.conf
 echo "Create the repository root in /var/cache/pacman..."
-arch-chroot /mnt su - "$username" -c 'sudo install -d /var/cache/pacman/custom -o $USER'
+arch-chroot /mnt su - "$username" -c 'sudo -S install -d /var/cache/pacman/custom -o $USER'
 echo "Create the database in /var/cache/pacman/custom/..."
 arch-chroot /mnt su - "$username" -c "repo-add /var/cache/pacman/custom/custom.db.tar"
 
 echo "Adding AUR packages..."
 arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
-arch-chroot /mnt su - "$username" -c "sudo pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
+arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
 
 echo "Copying old nvidia-container-toolkit config to /etc/nvidia-container-toolkit/config-old.toml..."
 cp /mnt/etc/nvidia-container-toolkit/config.toml /mnt/etc/nvidia-container-toolkit/config-old.toml
@@ -159,3 +172,10 @@ while IFS= read -r line; do
     fi
 done <"/mnt/etc/nvidia-container-toolkit/config.toml"
 mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.toml
+
+echo "Enable start-up services..."
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable NetworkManager.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable networkd.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable resolved.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable iwd.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable docker.service"
