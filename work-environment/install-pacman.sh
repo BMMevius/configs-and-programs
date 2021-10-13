@@ -15,10 +15,26 @@ prompt_confirm() {
 
 prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SSID:")" || echo "No WIFI enabled"
 
+echo "Copying old pacman.conf to /etc/pacman-old.conf..."
+cp /etc/pacman.conf /etc/pacman-old.conf
+new_pacman_file=/etc/pacman-custom.conf
+echo "Creating $new_pacman_file..."
+while IFS= read -r line; do
+    if [ "$line" = "#[multilib]" ]; then
+        echo "[multilib]" >>$new_pacman_file
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ]; then
+        echo "Include = /etc/pacman.d/mirrorlist" >>$new_pacman_file
+    else
+        echo "$line" >>$new_pacman_file
+    fi
+done <"/etc/pacman.conf"
+echo "Move custom file to used pacman file..."
+mv $new_pacman_file /etc/pacman.conf
+
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
     iwd iw lutris steam sudo docker docker-compose nvidia cuda cuda-tools xf86-video-intel mesa zsh man aws-cli \
-    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn grub efibootmgr \
+    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn grub efibootmgr nano vi vifm \
     wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls \
     mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
     lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
@@ -55,7 +71,6 @@ while IFS= read -r line; do
     fi
 done <"/mnt/etc/default/grub"
 mv $new_grub_conf /mnt/etc/default/grub
-
 
 echo "NVIDIA NVENC hardware encoding..."
 echo 'ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprobe -c0 -u"' >/mnt/etc/udev/rules.d/70-nvidia.rules
