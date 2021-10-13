@@ -58,20 +58,8 @@ pacstrap /mnt base linux linux-firmware linux-headers \
 genfstab -U /mnt >>/mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 arch-chroot /mnt hwclock --systohc
-
-new_locale_file=/mnt/etc/locale.gen
-echo "Creating $new_locale_file..."
-while IFS= read -r line; do
-    if [ "$line" = "#en_US.UTF-8 UTF-8" ]; then
-        echo "en_US.UTF-8 UTF-8" >>$new_locale_file
-    else
-        echo "$line" >>$new_locale_file
-    fi
-done <"/mnt/etc/locale.gen"
-echo "Move custom file to used pacman file..."
-mv $new_locale_file /mnt/etc/locale.gen
+echo "en_US.UTF-8 UTF-8" >/mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
-
 echo "LANG=en_US.UTF-8" >/mnt/etc/locale.conf
 echo "laptop-uni" >/mnt/etc/hostname
 printf "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	laptop-uni" >/mnt/etc/hosts
