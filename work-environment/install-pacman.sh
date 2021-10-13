@@ -61,7 +61,9 @@ done <"/mnt/etc/mkinitcpio.conf"
 mv $new_mkinitcpio_conf /mnt/etc/mkinitcpio.conf
 
 echo "Installing GRUB..."
-grub-install --boot-directory=/mnt/boot --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+arch-chroot /mnt
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
 
 echo "Copying old grub to /etc/default/grub-old..."
 cp /mnt/etc/default/grub /mnt/etc/default/grub-old
