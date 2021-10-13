@@ -23,20 +23,17 @@ echo "Copying old pacman.conf to /etc/pacman-old.conf..."
 cp /etc/pacman.conf /etc/pacman-old.conf
 new_pacman_file=/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
-counter=0
-max=3
+prev_section=0
 while IFS= read -r line; do
     if [ "$line" = "#[multilib]" ]; then
         echo "[multilib]" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -eq $max ]; then
+        prev_section="[multilib]"
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ "$prev_section" = "[multilib]" ]; then
         echo "Include = /etc/pacman.d/mirrorlist" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -lt $max ]; then
-        echo "$line" >>$new_pacman_file
-        ((counter++))
     else
         echo "$line" >>$new_pacman_file
     fi
-done <"/etc/pacman.conf"
+done <"/mnt/etc/pacman.conf"
 echo "Move custom file to used pacman file..."
 mv $new_pacman_file /etc/pacman.conf
 
@@ -108,16 +105,13 @@ echo "Copying old pacman.conf to /etc/pacman-old.conf..."
 cp /mnt/etc/pacman.conf /mnt/etc/pacman-old.conf
 new_pacman_file=/mnt/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
-counter=0
-max=3
+prev_section=0
 while IFS= read -r line; do
     if [ "$line" = "#[multilib]" ]; then
         echo "[multilib]" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -eq $max ]; then
+        prev_section="[multilib]"
+    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ "$prev_section" = "[multilib]" ]; then
         echo "Include = /etc/pacman.d/mirrorlist" >>$new_pacman_file
-    elif [ "$line" = "#Include = /etc/pacman.d/mirrorlist" ] && [ $counter -lt $max ]; then
-        echo "$line" >>$new_pacman_file
-        ((counter++))
     else
         echo "$line" >>$new_pacman_file
     fi
