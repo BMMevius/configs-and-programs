@@ -18,7 +18,7 @@ prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SS
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
     iwd iw lutris steam sudo docker docker-compose nvidia cuda cuda-tools xf86-video-intel mesa zsh man aws-cli \
-    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn \
+    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn grub efibootmgr \
     wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls \
     mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
     lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
@@ -40,6 +40,9 @@ while IFS= read -r line; do
 done <"/mnt/etc/mkinitcpio.conf"
 mv $new_mkinitcpio_conf /mnt/etc/mkinitcpio.conf
 
+echo "Installing GRUB..."
+grub-install --boot-directory=/mnt/boot --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+
 echo "Copying old grub to /etc/default/grub-old..."
 cp /mnt/etc/default/grub /mnt/etc/default/grub-old
 new_grub_conf="/mnt/etc/default/grub-custom.conf"
@@ -52,6 +55,7 @@ while IFS= read -r line; do
     fi
 done <"/mnt/etc/default/grub"
 mv $new_grub_conf /mnt/etc/default/grub
+
 
 echo "NVIDIA NVENC hardware encoding..."
 echo 'ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprobe -c0 -u"' >/mnt/etc/udev/rules.d/70-nvidia.rules
