@@ -13,7 +13,7 @@ prompt_confirm() {
   done
 }
 
-prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SSID:")" || return 0
+prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SSID:")" || echo "No WIFI enabled"
 
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
