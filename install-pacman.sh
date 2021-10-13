@@ -3,14 +3,20 @@
 set -e
 
 prompt_confirm() {
-  while true; do
-    read -r -n 1 -p "${1:-Continue?} [y/n]: " REPLY
-    case $REPLY in
-      [yY]) echo ; return 1 ;;
-      [nN]) echo ; return 0 ;;
-      *) printf " \033[31m %s \n\033[0m" "invalid input"
-    esac
-  done
+    while true; do
+        read -r -n 1 -p "${1:-Continue?} [y/n]: " REPLY
+        case $REPLY in
+        [yY])
+            echo
+            return 1
+            ;;
+        [nN])
+            echo
+            return 0
+            ;;
+        *) printf " \033[31m %s \n\033[0m" "invalid input" ;;
+        esac
+    done
 }
 
 if ! prompt_confirm "Connect to wifi?"; then
@@ -19,8 +25,6 @@ if ! prompt_confirm "Connect to wifi?"; then
     ping -c 1 google.com
 fi
 
-echo "Copying old pacman.conf to /etc/pacman-old.conf..."
-cp /etc/pacman.conf /etc/pacman-old.conf
 new_pacman_file=/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
 prev_section=0
@@ -33,7 +37,7 @@ while IFS= read -r line; do
     else
         echo "$line" >>$new_pacman_file
     fi
-done <"/mnt/etc/pacman.conf"
+done <"/etc/pacman.conf"
 echo "Move custom file to used pacman file..."
 mv $new_pacman_file /etc/pacman.conf
 
@@ -51,8 +55,27 @@ pacstrap /mnt base linux linux-firmware linux-headers \
     lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader wine-mono \
     wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd
 
-echo "Copying old mkinitcpio.conf to /etc/mkinitcpio-old.conf..."
-cp /mnt/etc/mkinitcpio.conf /mnt/etc/mkinitcpio-old.conf
+genfstab -U /mnt >>/mnt/etc/fstab
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+arch-chroot /mnt hwclock --systohc
+
+new_locale_file=/mnt/etc/locale.gen
+echo "Creating $new_locale_file..."
+while IFS= read -r line; do
+    if [ "$line" = "#en_US.UTF-8 UTF-8" ]; then
+        echo "en_US.UTF-8 UTF-8" >>$new_locale_file
+    else
+        echo "$line" >>$new_locale_file
+    fi
+done <"/mnt/etc/locale.gen"
+echo "Move custom file to used pacman file..."
+mv $new_locale_file /mnt/etc/locale.gen
+arch-chroot /mnt locale-gen
+
+echo "LANG=en_US.UTF-8" >/mnt/etc/locale.conf
+echo "laptop-uni" >/mnt/etc/hostname
+printf "127.0.0.1	localhost\n::1		localhost\n127.0.1.1	laptop-uni" >/mnt/etc/hosts
+
 new_mkinitcpio_conf="/mnt/etc/mkinitcpio-custom.conf"
 echo "Add NVIDIA modules to /etc/mkinitcpio.conf..."
 while IFS= read -r line; do
@@ -64,11 +87,12 @@ while IFS= read -r line; do
 done <"/mnt/etc/mkinitcpio.conf"
 mv $new_mkinitcpio_conf /mnt/etc/mkinitcpio.conf
 
+arch-chroot /mnt mkinitcpio -P
+arch-chroot /mnt passwd
+
 echo "Installing GRUB..."
 arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
-echo "Copying old grub to /etc/default/grub-old..."
-cp /mnt/etc/default/grub /mnt/etc/default/grub-old
 new_grub_conf="/mnt/etc/default/grub-custom.conf"
 echo "Set kernel parameters in /etc/default/grub..."
 while IFS= read -r line; do
@@ -101,8 +125,6 @@ NeedsTargets
 Exec=/bin/sh -c 'while read -r trg; do case $trg in linux) exit 0; esac; done; /usr/bin/mkinitcpio -P'
 " >/mnt/etc/pacman.d/hooks/nvidia.hook
 
-echo "Copying old pacman.conf to /etc/pacman-old.conf..."
-cp /mnt/etc/pacman.conf /mnt/etc/pacman-old.conf
 new_pacman_file=/mnt/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
 prev_section=0
@@ -154,8 +176,6 @@ echo "Adding AUR packages..."
 arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
 arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
 
-echo "Copying old nvidia-container-toolkit config to /etc/nvidia-container-toolkit/config-old.toml..."
-cp /mnt/etc/nvidia-container-toolkit/config.toml /mnt/etc/nvidia-container-toolkit/config-old.toml
 new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
 while IFS= read -r line; do
