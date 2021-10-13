@@ -18,7 +18,7 @@ prompt_confirm "Connect to wifi?" && iwctl station wlan0 connect "$(read -rp "SS
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
     iwd iw lutris steam sudo docker docker-compose nvidia cuda cuda-tools xf86-video-intel mesa zsh man aws-cli \
-    openvpn git qtcreator qt6 base-devel \
+    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn \
     wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls \
     mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
     lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
@@ -95,7 +95,7 @@ mv $new_pacman_file /etc/pacman.conf
 
 echo "Creating user..."
 useradd -mG sudo docker bastiaan
-echo "Give new password for login 'bastian'..."
+echo "Give new password for login 'bastiaan'..."
 passwd bastiaan
 
 echo "Change default shell to zsh..."
@@ -121,8 +121,8 @@ echo "Create the database in /var/cache/pacman/custom/..."
 repo-add /var/cache/pacman/custom/custom.db.tar
 
 echo "Adding AUR packages..."
-aur sync nvidia-container-toolkit
-pacstrap nvidia-container-toolkit
+aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg
+pacstrap nvidia-container-toolkit slack-desktop teams onedrive-abraunegg
 
 echo "Copying old nvidia-container-toolkit config to /etc/nvidia-container-toolkit/config-old.toml..."
 cp /etc/nvidia-container-toolkit/config.toml /etc/nvidia-container-toolkit/config-old.toml
