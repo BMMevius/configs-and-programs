@@ -61,9 +61,7 @@ done <"/mnt/etc/mkinitcpio.conf"
 mv $new_mkinitcpio_conf /mnt/etc/mkinitcpio.conf
 
 echo "Installing GRUB..."
-arch-chroot /mnt
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
-
+arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 
 echo "Copying old grub to /etc/default/grub-old..."
 cp /mnt/etc/default/grub /mnt/etc/default/grub-old
@@ -99,12 +97,9 @@ NeedsTargets
 Exec=/bin/sh -c 'while read -r trg; do case $trg in linux) exit 0; esac; done; /usr/bin/mkinitcpio -P'
 " >/mnt/etc/pacman.d/hooks/nvidia.hook
 
-echo "Chroot to /mnt..."
-arch-chroot /mnt
-
 echo "Copying old pacman.conf to /etc/pacman-old.conf..."
-cp /etc/pacman.conf /etc/pacman-old.conf
-new_pacman_file=/etc/pacman-custom.conf
+cp /mnt/etc/pacman.conf /mnt/etc/pacman-old.conf
+new_pacman_file=/mnt/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
 while IFS= read -r line; do
     if [ "$line" = "#[multilib]" ]; then
@@ -114,48 +109,47 @@ while IFS= read -r line; do
     else
         echo "$line" >>$new_pacman_file
     fi
-done <"/etc/pacman.conf"
+done <"/mnt/etc/pacman.conf"
 echo "Move custom file to used pacman file..."
-mv $new_pacman_file /etc/pacman.conf
+mv $new_pacman_file /mnt/etc/pacman.conf
 
 echo "Creating user..."
 username=$(read -rp "Username:")
-useradd -mG sudo docker "$username"
+arch-chroot /mnt useradd -mG sudo docker "$username"
 echo "Give new password for login '$username'..."
-passwd "$username"
+arch-chroot /mnt passwd "$username"
 
 echo "Copying .zshrc"
-cp "zsh/.zshrc" "/mnt/home/$username/"
+cp ".zshrc" "/mnt/home/$username/"
 
 echo "Change default shell to zsh..."
-sudo chsh -s "$(which zsh)"
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/history-search-multi-word
-git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-/home/$username/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting
+arch-chroot /mnt su - "$username" -c "sudo chsh -s $(which zsh)"
+arch-chroot /mnt su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/history-search-multi-word'
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions'
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting'
 
 # Install aurutils
 aurutils_dir="/home/$username/aur/aurutils"
-git clone https://aur.archlinux.org/aurutils.git "$aurutils_dir"
-cd "$aurutils_dir"
-makepkg -si
+arch-chroot /mnt su - "$username" -c "git clone https://aur.archlinux.org/aurutils.git $aurutils_dir"
+arch-chroot /mnt su - "$username" -c "cd $aurutils_dir; makepkg -si"
 
 # Creating local repository
 echo "Add custom pacman repositoy..."
-printf "[options]\nCacheDir = /var/cache/pacman/pkg\nCacheDir = /var/cache/pacman/custom\nCleanMethod = KeepCurrent\n\n[custom]\nSigLevel = Optional TrustAll\nServer = file:///var/cache/pacman/custom" >/etc/pacman.d/custom
-echo "Include = /etc/pacman.d/custom" >>/etc/pacman.conf
+printf "[options]\nCacheDir = /var/cache/pacman/pkg\nCacheDir = /var/cache/pacman/custom\nCleanMethod = KeepCurrent\n\n[custom]\nSigLevel = Optional TrustAll\nServer = file:///var/cache/pacman/custom" >/mnt/etc/pacman.d/custom
+echo "Include = /etc/pacman.d/custom" >>/mnt/etc/pacman.conf
 echo "Create the repository root in /var/cache/pacman..."
-sudo install -d /var/cache/pacman/custom -o "$USER"
+arch-chroot /mnt su - "$username" -c 'sudo install -d /var/cache/pacman/custom -o $USER'
 echo "Create the database in /var/cache/pacman/custom/..."
-repo-add /var/cache/pacman/custom/custom.db.tar
+arch-chroot /mnt su - "$username" -c "repo-add /var/cache/pacman/custom/custom.db.tar"
 
 echo "Adding AUR packages..."
-aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg
-pacstrap nvidia-container-toolkit slack-desktop teams onedrive-abraunegg
+arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
+arch-chroot /mnt su - "$username" -c "sudo pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
 
 echo "Copying old nvidia-container-toolkit config to /etc/nvidia-container-toolkit/config-old.toml..."
-cp /etc/nvidia-container-toolkit/config.toml /etc/nvidia-container-toolkit/config-old.toml
-new_nvidia_container_toolkit_conf="/etc/nvidia-container-toolkit/config-custom.toml"
+cp /mnt/etc/nvidia-container-toolkit/config.toml /mnt/etc/nvidia-container-toolkit/config-old.toml
+new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
 while IFS= read -r line; do
     if [ "$line" = "no-cgroups = true" ]; then
@@ -163,5 +157,5 @@ while IFS= read -r line; do
     else
         echo "$line" >>$new_nvidia_container_toolkit_conf
     fi
-done <"/etc/nvidia-container-toolkit/config.toml"
-mv $new_nvidia_container_toolkit_conf /etc/nvidia-container-toolkit/config.toml
+done <"/mnt/etc/nvidia-container-toolkit/config.toml"
+mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.toml
