@@ -186,12 +186,13 @@ arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-de
 # mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.toml
 
 echo "Enable start-up services..."
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable NetworkManager.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable systemd-networkd.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable systemd-resolved.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable iwd.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable docker.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable dhcpd4.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable dhcpd6.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable NetworkManager.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable systemd-networkd.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable systemd-resolved.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable iwd.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable docker.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable dhcpd4.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable dhcpd6.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable sddm.service"
 
 arch-chroot /mnt mkinitcpio -P
