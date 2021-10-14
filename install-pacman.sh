@@ -26,6 +26,14 @@ if ! prompt_confirm "Connect to wifi?"; then
     watch -n 1 ping -c 1 142.250.179.206
 fi
 
+if ! prompt_confirm "Format disks?"; then
+    mkfs.ext4 /dev/sda2
+    mkfs.fat -F32 /dev/sda2
+    mount /dev/sda2 /mnt
+    mkdir /mnt/boot
+    mount /dev/sda1 /mnt/boot
+fi
+
 new_pacman_file=/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
 prev_section=0
@@ -149,7 +157,7 @@ arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting'
 
 echo "Copying .zshrc"
-cp "/run/archiso/bootmgr/.zshrc" "/mnt/home/$username/"
+cp "/run/archiso/bootmnt/.zshrc" "/mnt/home/$username/"
 
 # Install yay
 yay_dir="/home/$username/aur/yay"
