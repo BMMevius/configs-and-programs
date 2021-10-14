@@ -161,16 +161,16 @@ arch-chroot /mnt su - "$username" -c "yay -Syu --devel"
 echo "Adding AUR packages..."
 arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw"
 
-new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
-echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
-while IFS= read -r line; do
-    if [ "$line" = "no-cgroups = true" ]; then
-        echo "no-cgroups = false" >>$new_nvidia_container_toolkit_conf
-    else
-        echo "$line" >>$new_nvidia_container_toolkit_conf
-    fi
-done <"/mnt/etc/nvidia-container-toolkit/config.toml"
-mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.toml
+# new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
+# echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
+# while IFS= read -r line; do
+#     if [ "$line" = "no-cgroups = true" ]; then
+#         echo "no-cgroups = false" >>$new_nvidia_container_toolkit_conf
+#     else
+#         echo "$line" >>$new_nvidia_container_toolkit_conf
+#     fi
+# done <"/mnt/etc/nvidia-container-toolkit/config.toml"
+# mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.toml
 
 echo "Enable start-up services..."
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable NetworkManager.service"
