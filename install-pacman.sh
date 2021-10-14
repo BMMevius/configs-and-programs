@@ -30,7 +30,7 @@ if ! prompt_confirm "Format disks?"; then
     umount /dev/sda1 || echo "/dev/sda1 already unmounted"
     umount /dev/sda2 || echo "/dev/sda2 already unmounted"
     mkfs.ext4 /dev/sda2
-    mkfs.fat -F32 /dev/sda2
+    mkfs.fat -F32 /dev/sda1
 fi
 
 if ! prompt_confirm "Mount disks?"; then
