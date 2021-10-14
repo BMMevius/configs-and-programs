@@ -138,7 +138,7 @@ arch-chroot /mnt useradd -mG docker "$username"
 echo "Give new password for login '$username'..."
 arch-chroot /mnt passwd "$username"
 echo "bastiaan ALL=(ALL) ALL" >>/mnt/etc/sudoers
-echo "$username laptop-uni= NOPASSWD: /usr/bin/pacman -Syu" >>/mnt/etc/sudoers
+echo "$username ALL= NOPASSWD: /usr/bin/pacman -Syu" >>/mnt/etc/sudoers
 
 echo "Copying .zshrc"
 cp ".zshrc" "/mnt/home/$username/"
