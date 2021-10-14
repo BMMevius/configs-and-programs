@@ -68,7 +68,7 @@ pacstrap /mnt base linux linux-firmware linux-headers \
     ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 \
     lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader wine-mono \
     wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd dhcp \
-    nvidia-settings openssh vlc chromium
+    nvidia-settings openssh vlc chromium nvidia-prime
 
 genfstab -U /mnt >>/mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -129,6 +129,18 @@ When=PostTransaction
 NeedsTargets
 Exec=/bin/sh -c 'while read -r trg; do case $trg in linux) exit 0; esac; done; /usr/bin/mkinitcpio -P'
 " >/mnt/etc/pacman.d/hooks/nvidia.hook
+
+echo "NVIDIA PRIME..."
+echo '# Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
+ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
+
+# Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
+ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
+ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"
+' >/etc/udev/rules.d/80-nvidia-pm.rules
+
+echo 'options nvidia "NVreg_DynamicPowerManagement=0x02"' >/etc/modprobe.d/nvidia-pm.conf
 
 new_pacman_file=/mnt/etc/pacman-custom.conf
 echo "Creating $new_pacman_file..."
@@ -195,5 +207,6 @@ arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable systemd-resolved.
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable iwd.service"
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable docker.service"
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable sddm.service"
+arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable nvidia-persistenced.service"
 
 arch-chroot /mnt mkinitcpio -P
