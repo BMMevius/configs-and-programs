@@ -173,7 +173,7 @@ arch-chroot /mnt su - "$username" -c "yay -Y --gendb"
 arch-chroot /mnt su - "$username" -c "yay -Syu --devel"
 
 echo "Adding AUR packages..."
-arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli-bin nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw cast_control"
+arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli-bin nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw"
 
 echo "source /usr/share/nvm/init-nvm.sh" >>"/mnt/home/$username/.zshrc"
 
