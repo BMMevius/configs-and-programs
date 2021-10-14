@@ -138,6 +138,7 @@ arch-chroot /mnt useradd -mG docker "$username"
 echo "Give new password for login '$username'..."
 arch-chroot /mnt passwd "$username"
 echo "bastiaan ALL=(ALL) ALL" >>/mnt/etc/sudoers
+echo "$username laptop-uni= NOPASSWD: /usr/bin/pacman -Syu" >>/mnt/etc/sudoers
 
 echo "Copying .zshrc"
 cp ".zshrc" "/mnt/home/$username/"
@@ -149,23 +150,12 @@ arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zdharma/histo
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions'
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting'
 
-# Install aurutils
-aurutils_dir="/home/$username/aur/aurutils"
-arch-chroot /mnt su - "$username" -c "git clone https://aur.archlinux.org/aurutils.git $aurutils_dir"
-arch-chroot /mnt su - "$username" -c "cd $aurutils_dir; makepkg -si"
-
-# Creating local repository
-echo "Add custom pacman repositoy..."
-printf "[options]\nCacheDir = /var/cache/pacman/pkg\nCacheDir = /var/cache/pacman/custom\nCleanMethod = KeepCurrent\n\n[custom]\nSigLevel = Optional TrustAll\nServer = file:///var/cache/pacman/custom" >/mnt/etc/pacman.d/custom
-echo "Include = /etc/pacman.d/custom" >>/mnt/etc/pacman.conf
-echo "Create the repository root in /var/cache/pacman..."
-arch-chroot /mnt su - "$username" -c 'sudo -S install -d /var/cache/pacman/custom -o $USER'
-echo "Create the database in /var/cache/pacman/custom/..."
-arch-chroot /mnt su - "$username" -c "repo-add /var/cache/pacman/custom/custom.db.tar"
-
-echo "Adding AUR packages..."
-arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli aic94xx-firmware wd719x-firmware upd72020x-fw"
-arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli aic94xx-firmware wd719x-firmware upd72020x-fw"
+# Install yay
+yay_dir="/home/$username/aur/yay"
+arch-chroot /mnt su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
+arch-chroot /mnt su - "$username" -c "cd $yay_dir; makepkg -si"
+arch-chroot /mnt su - "$username" -c "yay -Y --gendb"
+arch-chroot /mnt su - "$username" -c "yay -Syu --devel"
 
 new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
