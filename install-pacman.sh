@@ -133,7 +133,7 @@ mv $new_pacman_file /mnt/etc/pacman.conf
 
 echo "Creating user..."
 username=$(read -rp "Username:")
-arch-chroot /mnt useradd -mG sudo docker "$username"
+arch-chroot /mnt useradd -mG docker "$username"
 echo "Give new password for login '$username'..."
 arch-chroot /mnt passwd "$username"
 echo "bastiaan ALL=(ALL) ALL" >>/mnt/etc/sudoers
