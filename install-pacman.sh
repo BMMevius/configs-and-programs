@@ -157,6 +157,9 @@ arch-chroot /mnt su - "$username" -c "cd $yay_dir; makepkg -si"
 arch-chroot /mnt su - "$username" -c "yay -Y --gendb"
 arch-chroot /mnt su - "$username" -c "yay -Syu --devel"
 
+echo "Adding AUR packages..."
+arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw"
+
 new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
 while IFS= read -r line; do
