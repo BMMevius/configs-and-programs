@@ -91,11 +91,13 @@ while IFS= read -r line; do
     fi
 done <"/mnt/etc/default/grub"
 mv $new_grub_conf /mnt/etc/default/grub
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "NVIDIA NVENC hardware encoding..."
 echo 'ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprobe -c0 -u"' >/mnt/etc/udev/rules.d/70-nvidia.rules
 
 echo "Creating pacman hook..."
+mkdir /mnt/etc/pacman.d/hooks
 echo "[Trigger]
 Operation=Install
 Operation=Upgrade
@@ -161,8 +163,8 @@ echo "Create the database in /var/cache/pacman/custom/..."
 arch-chroot /mnt su - "$username" -c "repo-add /var/cache/pacman/custom/custom.db.tar"
 
 echo "Adding AUR packages..."
-arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
-arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg"
+arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm"
+arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm"
 
 new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
@@ -181,3 +183,5 @@ arch-chroot /mnt su - "$username" -c "sudo systemctl enable networkd.service"
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable resolved.service"
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable iwd.service"
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable docker.service"
+
+arch-chroot /mnt mkinitcpio -P
