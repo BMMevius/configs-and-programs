@@ -97,7 +97,7 @@ echo "NVIDIA NVENC hardware encoding..."
 echo 'ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprobe -c0 -u"' >/mnt/etc/udev/rules.d/70-nvidia.rules
 
 echo "Creating pacman hook..."
-mkdir /mnt/etc/pacman.d/hooks
+mkdir -p /mnt/etc/pacman.d/hooks
 echo "[Trigger]
 Operation=Install
 Operation=Upgrade
@@ -132,7 +132,8 @@ echo "Move custom file to used pacman file..."
 mv $new_pacman_file /mnt/etc/pacman.conf
 
 echo "Creating user..."
-username=$(read -rp "Username:")
+read -rp "Username:" REPLY
+username=$REPLY
 arch-chroot /mnt useradd -mG docker "$username"
 echo "Give new password for login '$username'..."
 arch-chroot /mnt passwd "$username"
@@ -163,8 +164,8 @@ echo "Create the database in /var/cache/pacman/custom/..."
 arch-chroot /mnt su - "$username" -c "repo-add /var/cache/pacman/custom/custom.db.tar"
 
 echo "Adding AUR packages..."
-arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm"
-arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm"
+arch-chroot /mnt su - "$username" -c "aur sync --no-view nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli aic94xx-firmware wd719x-firmware upd72020x-fw"
+arch-chroot /mnt su - "$username" -c "sudo -S pacman -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli aic94xx-firmware wd719x-firmware upd72020x-fw"
 
 new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
