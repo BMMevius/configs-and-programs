@@ -29,8 +29,11 @@ fi
 if ! prompt_confirm "Format disks?"; then
     mkfs.ext4 /dev/sda2
     mkfs.fat -F32 /dev/sda2
+fi
+
+if ! prompt_confirm "Mount disks?"; then
     mount /dev/sda2 /mnt
-    mkdir /mnt/boot
+    mkdir -p /mnt/boot
     mount /dev/sda1 /mnt/boot
 fi
 
