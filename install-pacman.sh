@@ -21,8 +21,9 @@ prompt_confirm() {
 
 if ! prompt_confirm "Connect to wifi?"; then
     read -rp "SSID: " ssid
-    iwctl station wlan0 connect "$ssid"
-    ping -c 1 google.com
+    iwctl --passphrase 9KMVEG7UGVFM4RHF station wlan0 connect "$ssid"
+    # IP-address is from Google
+    watch -n 1 ping -c 1 142.250.179.206
 fi
 
 new_pacman_file=/etc/pacman-custom.conf
@@ -46,14 +47,14 @@ timedatectl set-ntp true
 echo "Install packages on new system..."
 pacstrap /mnt base linux linux-firmware linux-headers \
     iwd iw lutris steam sudo docker docker-compose nvidia cuda cuda-tools xf86-video-intel mesa zsh man aws-cli \
-    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn grub efibootmgr nano vi vifm \
+    openvpn git qtcreator qt6 base-devel dlang firefox networkmanager-openvpn grub efibootmgr nano vi vifm sddm \
     wine-staging giflib lib32-giflib libpng lib32-libpng libldap lib32-libldap gnutls lib32-gnutls \
     mpg123 lib32-mpg123 openal lib32-openal v4l-utils lib32-v4l-utils libpulse lib32-libpulse libgpg-error \
     lib32-libgpg-error alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib libjpeg-turbo lib32-libjpeg-turbo \
     sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama \
     ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 \
     lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader wine-mono \
-    wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd
+    wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd dhcp
 
 genfstab -U /mnt >>/mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -140,15 +141,15 @@ arch-chroot /mnt passwd "$username"
 echo "bastiaan ALL=(ALL) ALL" >>/mnt/etc/sudoers
 echo "$username ALL= NOPASSWD: /usr/bin/pacman" >>/mnt/etc/sudoers
 
-echo "Copying .zshrc"
-cp ".zshrc" "/mnt/home/$username/"
-
 echo "Change default shell to zsh..."
 arch-chroot /mnt su - "$username" -c "sudo -S chsh -s $(which zsh)"
 arch-chroot /mnt su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/history-search-multi-word'
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions'
 arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting'
+
+echo "Copying .zshrc"
+cp "/run/archiso/bootmgr/.zshrc" "/mnt/home/$username/"
 
 # Install yay
 yay_dir="/home/$username/aur/yay"
@@ -173,9 +174,11 @@ mv $new_nvidia_container_toolkit_conf /mnt/etc/nvidia-container-toolkit/config.t
 
 echo "Enable start-up services..."
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable NetworkManager.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable networkd.service"
-arch-chroot /mnt su - "$username" -c "sudo systemctl enable resolved.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable systemd-networkd.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable systemd-resolved.service"
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable iwd.service"
 arch-chroot /mnt su - "$username" -c "sudo systemctl enable docker.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable dhcpd4.service"
+arch-chroot /mnt su - "$username" -c "sudo systemctl enable dhcpd6.service"
 
 arch-chroot /mnt mkinitcpio -P
