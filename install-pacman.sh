@@ -67,7 +67,8 @@ pacstrap /mnt base linux linux-firmware linux-headers \
     sqlite lib32-sqlite libxcomposite lib32-libxcomposite libxinerama lib32-libgcrypt libgcrypt lib32-libxinerama \
     ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 \
     lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader wine-mono \
-    wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd dhcp
+    wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd dhcp \
+    nvidia-settings openssh
 
 genfstab -U /mnt >>/mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
