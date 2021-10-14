@@ -68,7 +68,7 @@ pacstrap /mnt base linux linux-firmware linux-headers \
     ncurses lib32-ncurses opencl-icd-loader lib32-opencl-icd-loader libxslt lib32-libxslt libva lib32-libva gtk3 \
     lib32-gtk3 gst-plugins-base-libs lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader wine-mono \
     wayland xorg-xwayland plasma plasma-wayland-session egl-wayland ttf-liberation wqy-zenhei lib32-systemd dhcp \
-    nvidia-settings openssh
+    nvidia-settings openssh vlc lutris steam chromium
 
 genfstab -U /mnt >>/mnt/etc/fstab
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -173,7 +173,9 @@ arch-chroot /mnt su - "$username" -c "yay -Y --gendb"
 arch-chroot /mnt su - "$username" -c "yay -Syu --devel"
 
 echo "Adding AUR packages..."
-arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw"
+arch-chroot /mnt su - "$username" -c "yay -Syu nvidia-container-toolkit slack-desktop teams onedrive-abraunegg heroku-cli-bin nvm balena-cli-bin aic94xx-firmware wd719x-firmware upd72020x-fw cast_control"
+
+echo "source /usr/share/nvm/init-nvm.sh" >>"/mnt/home/$username/.zshrc"
 
 # new_nvidia_container_toolkit_conf="/mnt/etc/nvidia-container-toolkit/config-custom.toml"
 # echo "Set parameters in /etc/nvidia-container-toolkit/config.toml..."
@@ -192,8 +194,6 @@ arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable systemd-networkd.
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable systemd-resolved.service"
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable iwd.service"
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable docker.service"
-arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable dhcpd4.service"
-arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable dhcpd6.service"
 arch-chroot /mnt su - "$username" -c "sudo -S systemctl enable sddm.service"
 
 arch-chroot /mnt mkinitcpio -P
