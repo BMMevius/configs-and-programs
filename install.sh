@@ -125,11 +125,20 @@ if [ "$(prompt_choice "Install work tools?" "y" "n")" = "y" ]; then
     pacstrap "$mount_path" docker docker-compose cuda cuda-tools aws-cli openvpn qtcreator qt6 networkmanager-openvpn
     arch-chroot "$mount_path" su - "$username" -c "yay -Syu nvidia-container-toolkit heroku-cli-bin nvm balena-cli-bin"
     arch-chroot "$mount_path" "systemctl enable docker.service"
+    arch-chroot "$mount_path" usermod -aG docker "$username"
 fi
 
 prompt_custom_choice "Install terminal environment <package to be installed>" "echo pacstrap $mount_path %s"
 
+echo "Change default shell to zsh..."
+arch-chroot /mnt su - "$username" -c "sudo -S chsh -s $(which zsh)"
+arch-chroot /mnt su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zdharma/history-search-multi-word.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/history-search-multi-word'
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-autosuggestions.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-autosuggestions'
+arch-chroot /mnt su - "$username" -c 'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"/plugins/zsh-syntax-highlighting'
+
 cp -rf ./user/** "$mount_path/home/$username"
+echo "source /usr/share/nvm/init-nvm.sh" >>"/mnt/home/$username/.zshrc"
 
 echo "Generate an fstab file..."
 genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
@@ -153,3 +162,4 @@ arch-chroot "$mount_path" passwd
 
 echo "Installing grub..."
 arch-chroot "$mount_path" grub-install --target=x86_64-efi --efi-directory="${boot_path:4}" --bootloader-id=GRUB
+arch-chroot "$mount_path" grub-mkconfig -o "${boot_path:4}/grub/grub.cfg"
