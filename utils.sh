@@ -17,3 +17,18 @@ prompt_choice() {
         done
     done
 }
+
+prompt_custom_choice() {
+    local message cmd
+    message=$1
+    cmd=$2
+
+    while true; do
+        read -r -p "$message or [S]top: " REPLY
+        if [ "s" == "${REPLY,,}" ]; then
+            return 0
+        else
+            bash -c "$(printf "\n$cmd\n" $REPLY)" || echo "Wrong choice..."
+        fi
+    done
+}
