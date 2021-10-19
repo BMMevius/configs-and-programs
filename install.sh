@@ -27,10 +27,10 @@ read -rp "Mount path of OS boot partition: " boot_path
 
 echo "Install basic packages..."
 pacstrap "$mount_path" base linux linux-firmware git sudo man grub efibootmgr nano vi udisks2 udevil dhcpcd networkmanager
-arch-chroot "$mount_path" "systemctl enable dhcpcd.service"
-arch-chroot "$mount_path" "systemctl enable NetworkManager.service"
-arch-chroot "$mount_path" "systemctl enable systemd-networkd.service"
-arch-chroot "$mount_path" "systemctl enable systemd-resolved.service"
+arch-chroot "$mount_path" systemctl enable dhcpcd.service
+arch-chroot "$mount_path" systemctl enable NetworkManager.service
+arch-chroot "$mount_path" systemctl enable systemd-networkd.service
+arch-chroot "$mount_path" systemctl enable systemd-resolved.service
 
 echo "Creating user..."
 read -rp "Username: " username
@@ -41,7 +41,7 @@ echo "$username ALL=(ALL) ALL" >>"$mount_path/etc/sudoers"
 echo "$username ALL= NOPASSWD: /usr/bin/pacman" >>"$mount_path/etc/sudoers"
 
 echo "Enabling auto USB mounter service..."
-arch-chroot "$mount_path" "systemctl enable devmon@$username.service"
+arch-chroot "$mount_path" systemctl enable devmon@$username.service
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
@@ -62,7 +62,7 @@ desktop_env=$(prompt_choice "Choose a desktop enviroment" "i3" "Xfce")
 
 if [ "$has_wifi" = "y" ]; then
     pacstrap "$mount_path" iw iwd
-    arch-chroot "$mount_path" "systemctl enable iwd.service"
+    arch-chroot "$mount_path" systemctl enable iwd.service
 fi
 
 if [ "$has_bluetooth" = "y" ]; then
@@ -82,7 +82,7 @@ if [ "$(prompt_choice "Install drivers for video card?" "y" "n")" = "y" ]; then
     video_card2=$(prompt_choice "Manufacturer of the secondary video card?" "NVIDIA" "Intel" "AMD" "NONE")
     if [ "${video_card1,,}" = "nvidia" ] || [ "${video_card2,,}" = "nvidia" ]; then
         pacstrap "$mount_path" nvidia nvidia-utils nvidia-settings
-        arch-chroot "$mount_path" "systemctl enable nvidia-persistenced.service"
+        arch-chroot "$mount_path" systemctl enable nvidia-persistenced.service
         cp -rf ./nvidia/** "$mount_path"
         if [ "${video_card2,,}" = "nvidia" ]; then
             pacstrap "$mount_path" nvidia-prime
@@ -124,7 +124,7 @@ fi
 if [ "$(prompt_choice "Install work tools?" "y" "n")" = "y" ]; then
     pacstrap "$mount_path" docker docker-compose cuda cuda-tools aws-cli openvpn qtcreator qt6 networkmanager-openvpn
     arch-chroot "$mount_path" su - "$username" -c "yay -Syu nvidia-container-toolkit heroku-cli-bin nvm balena-cli-bin"
-    arch-chroot "$mount_path" "systemctl enable docker.service"
+    arch-chroot "$mount_path" systemctl enable docker.service
     arch-chroot "$mount_path" usermod -aG docker "$username"
 fi
 
