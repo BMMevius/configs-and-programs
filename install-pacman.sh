@@ -23,7 +23,7 @@ if ! prompt_confirm "Connect to wifi?"; then
     read -rp "SSID: " ssid
     iwctl --passphrase 9KMVEG7UGVFM4RHF station wlan0 connect "$ssid"
     # IP-address is from Google
-    watch -n 1 ping -c 1 142.250.179.206
+    while true; do ping -c 1 142.250.179.206 && break; done
 fi
 
 if ! prompt_confirm "Format disks?"; then
