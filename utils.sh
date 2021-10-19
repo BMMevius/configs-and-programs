@@ -32,3 +32,23 @@ prompt_custom_choice() {
         fi
     done
 }
+
+install_packages_from_file() {
+    local repo file mount_path username cmd
+    repo=$1
+    file=$2
+    mount_path=$3
+    username=$4
+
+    if [ "$repo" = "pacman" ]; then
+        cmd="pacstrap $mount_path"
+    elif [ "$repo" = "aur" ]; then
+        cmd="arch-chroot /mnt su - $username -c yay -Sy --needed"
+    fi
+
+    while IFS= read -r line; do
+        if [ "${line:0:9}" = "packages=" ]; then
+            $cmd "${line:9}"
+        fi
+    done <"$file"
+}
