@@ -40,6 +40,9 @@ arch-chroot "$mount_path" passwd "$username"
 echo "$username ALL=(ALL) ALL" >>"$mount_path/etc/sudoers"
 echo "$username ALL= NOPASSWD: /usr/bin/pacman" >>"$mount_path/etc/sudoers"
 
+echo "Enabling auto USB mounter service..."
+arch-chroot "$mount_path" "systemctl enable devmon@$username.service"
+
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
 arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
