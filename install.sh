@@ -26,7 +26,7 @@ read -rp "Mount path of OS install partition: " mount_path
 read -rp "Mount path of OS boot partition: " boot_path
 
 echo "Install basic packages..."
-pacstrap "$mount_path" base linux linux-firmware git sudo man grub efibootmgr nano vi udisks2 udevil dhcpcd networkmanager
+pacstrap "$mount_path" base linux linux-firmware git sudo man grub efibootmgr nano vi udisks2 udevil dhcpcd networkmanager base-devel
 arch-chroot "$mount_path" systemctl enable dhcpcd.service
 arch-chroot "$mount_path" systemctl enable NetworkManager.service
 arch-chroot "$mount_path" systemctl enable systemd-networkd.service
