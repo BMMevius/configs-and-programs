@@ -34,7 +34,7 @@ arch-chroot "$mount_path" systemctl enable systemd-resolved.service
 
 echo "Creating user..."
 read -rp "Username: " username
-arch-chroot "$mount_path" useradd -mG "$username"
+arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 echo "$username ALL=(ALL) ALL" >>"$mount_path/etc/sudoers"
