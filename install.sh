@@ -52,6 +52,7 @@ echo "Installing xorg server..."
 pacstrap "$mount_path" xorg-server
 
 has_laptop=$(prompt_choice "Do you have a laptop?" "y" "n")
+has_bluetooth=$(prompt_choice "Do you have bluetooth?" "y" "n")
 has_wifi=$has_laptop
 [ "$has_laptop" = "n" ] && has_wifi=$(prompt_choice "Do you have a WiFi card?" "y" "n")
 desktop_env=$(prompt_choice "Choose a desktop enviroment" "i3" "Xfce")
@@ -59,6 +60,10 @@ desktop_env=$(prompt_choice "Choose a desktop enviroment" "i3" "Xfce")
 if [ "$has_wifi" = "y" ]; then
     pacstrap "$mount_path" iw iwd
     arch-chroot "$mount_path" "systemctl enable iwd.service"
+fi
+
+if [ "$has_bluetooth" = "y" ]; then
+    pacstrap "$mount_path" bluez
 fi
 
 if [ "${desktop_env,,}" = "i3" ]; then
