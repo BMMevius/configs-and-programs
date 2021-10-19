@@ -7,7 +7,7 @@ if [ "$(prompt_choice "Connect to wifi?" "y" "n")" = "y" ]; then
     read -rp "Passphrase: " passphrase
     iwctl --passphrase "$passphrase" station wlan0 connect "$ssid"
     # IP-address is from Google
-    while true; do ping -c 1 142.250.179.206 && break; done
+    while true; do ping -c 1 142.250.179.206 &>/dev/null && break; done
 fi
 
 if [ "$(prompt_choice "Format disks? (does unmount, format, and remount)" "y" "n")" = "y" ]; then
