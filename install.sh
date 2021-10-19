@@ -41,7 +41,7 @@ echo "$username ALL=(ALL) ALL" >>"$mount_path/etc/sudoers"
 echo "$username ALL= NOPASSWD: /usr/bin/pacman" >>"$mount_path/etc/sudoers"
 
 echo "Enabling auto USB mounter service..."
-arch-chroot "$mount_path" systemctl enable devmon@$username.service
+arch-chroot "$mount_path" systemctl enable "devmon@$username.service"
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
