@@ -60,6 +60,7 @@ parse_config() {
     packages=()
     services=()
     commands=()
+    groups=()
     aur_packages=()
     gpu_config_folders=()
     nvidia_packages=(nvidia nvidia-utils nvidia-settings)
@@ -93,6 +94,11 @@ parse_config() {
                 IFS='=' read -r -a split_on_equals <<< "$line"
                 IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
                 services+=("${list[@]}")
+            ;;
+            groups=*)
+                IFS='=' read -r -a split_on_equals <<< "$line"
+                IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
+                groups+=("${list[@]}")
             ;;
             command=*)
                 IFS='=' read -r -a split_on_equals <<< "$line"
@@ -181,15 +187,3 @@ parse_config() {
     export password
     export gpu_config_folders
 }
-
-parse_config
-echo "${packages[@]}"
-echo "${aur_packages[@]}"
-echo "${services[@]}"
-echo "${commands[@]}"
-echo "${mount_path[@]}"
-echo "${boot_path[@]}"
-echo "${root_password[@]}"
-echo "${username[@]}"
-echo "${password[@]}"
-echo "${gpu_config_folders[@]}"
