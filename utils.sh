@@ -56,10 +56,10 @@ install_packages_from_file() {
 }
 
 parse_config() {
-    # local packages services aur_packages boot_path mount_path root_password username password primary_gpu secondary_gpu gpu_config_folders
     config_path="./config.conf"
     packages=()
     services=()
+    commands=()
     aur_packages=()
     gpu_config_folders=()
     nvidia_packages=(nvidia nvidia-utils nvidia-settings)
@@ -93,6 +93,10 @@ parse_config() {
                 IFS='=' read -r -a split_on_equals <<< "$line"
                 IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
                 services+=("${list[@]}")
+            ;;
+            command=*)
+                IFS='=' read -r -a split_on_equals <<< "$line"
+                commands+=("${split_on_equals[1]}")
             ;;
             boot-path=*)
                 if [ "$prev_section" = "base" ]; then
@@ -169,6 +173,7 @@ parse_config() {
     export packages
     export aur_packages
     export services
+    export commands
     export mount_path
     export boot_path
     export root_password
@@ -181,6 +186,7 @@ parse_config
 echo "${packages[@]}"
 echo "${aur_packages[@]}"
 echo "${services[@]}"
+echo "${commands[@]}"
 echo "${mount_path[@]}"
 echo "${boot_path[@]}"
 echo "${root_password[@]}"
