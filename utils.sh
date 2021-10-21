@@ -54,6 +54,3 @@ install_packages_from_file() {
         fi
     done <"$file"
 }
-
-
-install_packages_from_file "aur" "personal-aur-packages.conf" "/mnt" "bastiaan"
