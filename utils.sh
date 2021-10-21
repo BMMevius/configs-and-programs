@@ -41,14 +41,19 @@ install_packages_from_file() {
     username=$4
 
     if [ "$repo" = "pacman" ]; then
-        cmd="pacstrap $mount_path"
+        cmd="echo pacstrap $mount_path"
     elif [ "$repo" = "aur" ]; then
-        cmd="arch-chroot /mnt su - $username -c yay -Sy --needed"
+        cmd="echo arch-chroot /mnt su - $username -c yay -Sy --needed"
     fi
 
     while IFS= read -r line; do
         if [ "${line:0:9}" = "packages=" ]; then
-            $cmd "${line:9}"
+            IFS='=' read -r -a packages <<< "$line"
+            IFS=' ' read -r -a package_array <<< "${packages[1]}"
+            $cmd "${package_array[*]}"
         fi
     done <"$file"
 }
+
+
+install_packages_from_file "aur" "personal-aur-packages.conf" "/mnt" "bastiaan"
