@@ -31,8 +31,6 @@ echo "Creating user..."
 arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
-echo "$username ALL=(ALL) ALL" >>"$mount_path/etc/sudoers"
-echo "$username ALL= NOPASSWD: /usr/bin/pacman" >>"$mount_path/etc/sudoers"
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
