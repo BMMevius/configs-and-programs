@@ -116,22 +116,10 @@ parse_config() {
                     mount_path=${split_on_equals[1]}
                 fi
             ;;
-            root-password=*)
-                if [ "$prev_section" = "base" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    root_password=${split_on_equals[1]}
-                fi
-            ;;
             username=*)
                 if [ "$prev_section" = "base" ]; then
                     IFS='=' read -r -a split_on_equals <<< "$line"
                     username=${split_on_equals[1]}
-                fi
-            ;;
-            password=*)
-                if [ "$prev_section" = "base" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    password=${split_on_equals[1]}
                 fi
             ;;
             primary=*)
@@ -182,8 +170,6 @@ parse_config() {
     export commands
     export mount_path
     export boot_path
-    export root_password
     export username
-    export password
     export gpu_config_folders
 }
