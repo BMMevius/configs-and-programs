@@ -28,7 +28,7 @@ echo "Install packages..."
 pacstrap "$mount_path" "${packages[@]}"
 
 echo "Creating user..."
-arch-chroot "$mount_path" useradd -mG "${groups[@]}" "$username"
+arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 
@@ -37,13 +37,14 @@ yay_dir="/home/$username/aur/yay"
 arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
 arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel"
 
-echo "Installing additional firmware..."
+echo "Installing additional aur packages..."
 arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]}"
+
+echo "Add user to groups..."
+arch-chroot "$mount_path" usermod -aG "${groups[@]}" "$username"
 
 echo "Enabling start-up services..."
 arch-chroot "$mount_path" systemctl enable "${services[@]}"
-
-cp -rf ./user/** "$mount_path/home/$username"
 
 echo "Generate an fstab file..."
 genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
@@ -55,6 +56,8 @@ echo "Generate /etc/adjtime..."
 arch-chroot "$mount_path" hwclock --systohc
 
 cp -rf ./base/** "$mount_path"
+cp -rf ./user/** "$mount_path/home/$username"
+cp -rf "${gpu_config_folders[@]}" "$mount_path"
 
 echo "Generate the locales..."
 arch-chroot "$mount_path" locale-gen
