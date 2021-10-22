@@ -28,7 +28,7 @@ echo "Install packages..."
 pacstrap "$mount_path" "${packages[@]}"
 
 echo "Creating user..."
-arch-chroot "$mount_path" useradd -m "$username"
+arch-chroot "$mount_path" useradd -mG "${groups[@]}" "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 

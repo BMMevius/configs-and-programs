@@ -167,6 +167,7 @@ parse_config() {
     export packages
     export aur_packages
     export services
+    export groups
     export commands
     export mount_path
     export boot_path
