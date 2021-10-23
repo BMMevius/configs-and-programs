@@ -55,9 +55,11 @@ while true; do
     break
 done
 
+echo "Copying files..."
 rsync -a ./base/ "$mount_path"
 rsync -a ./user-home/ "$mount_path/home/bastiaan"
 rsync -a "${gpu_config_folders[@]}" "$mount_path"
+arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
 echo "Generate the locales..."
 arch-chroot "$mount_path" locale-gen

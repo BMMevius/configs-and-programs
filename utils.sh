@@ -63,7 +63,7 @@ parse_config() {
     groups=()
     aur_packages=()
     gpu_config_folders=()
-    nvidia_packages=(nvidia nvidia-utils nvidia-settings)
+    nvidia_packages=(nvidia nvidia-utils nvidia-settings lib32-nvidia-utils)
     secondary_nvidia_packages=(nvidia-prime)
     nvidia_services=(nvidia-persistenced.service)
     nvidia_configs_folder="./nvidia/"
