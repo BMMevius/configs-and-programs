@@ -33,7 +33,7 @@ echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 
 cp -rf ./base/** "$mount_path"
-cp -rf ./user-home/** "$mount_path/home/$username"
+cp -rf "./$username" "$mount_path/home"
 cp -rf "${gpu_config_folders[@]}" "$mount_path"
 
 echo "Installing yay AUR manager..."
