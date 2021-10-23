@@ -41,9 +41,6 @@ arch-chroot "$mount_path" ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/local
 echo "Generate /etc/adjtime..."
 arch-chroot "$mount_path" hwclock --systohc
 
-echo "Generate the locales..."
-arch-chroot "$mount_path" locale-gen
-
 echo "Set the root passwd..."
 while true; do
     arch-chroot "$mount_path" passwd || continue
@@ -57,6 +54,9 @@ while true; do
     arch-chroot "$mount_path" passwd "$username" || continue
     break
 done
+
+echo "Generate the locales..."
+arch-chroot "$mount_path" locale-gen
 
 rsync -a ./base/ "$mount_path"
 rsync -a ./user-home/ "$mount_path/home/bastiaan"
