@@ -32,6 +32,24 @@ timedatectl set-ntp true
 echo "Install packages..."
 pacstrap "$mount_path" "${packages[@]}"
 
+echo "Generate an fstab file..."
+genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
+
+echo "Setting time zone..."
+arch-chroot "$mount_path" ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+
+echo "Generate /etc/adjtime..."
+arch-chroot "$mount_path" hwclock --systohc
+
+echo "Generate the locales..."
+arch-chroot "$mount_path" locale-gen
+
+echo "Set the root passwd..."
+while true; do
+    arch-chroot "$mount_path" passwd || continue
+    break
+done
+
 echo "Creating user..."
 arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
@@ -58,26 +76,8 @@ arch-chroot "$mount_path" usermod -aG "${groups[@]}" "$username"
 echo "Enabling start-up services..."
 arch-chroot "$mount_path" systemctl enable "${services[@]}"
 
-echo "Generate an fstab file..."
-genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
-
-echo "Setting time zone..."
-arch-chroot "$mount_path" ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
-
-echo "Generate /etc/adjtime..."
-arch-chroot "$mount_path" hwclock --systohc
-
-echo "Generate the locales..."
-arch-chroot "$mount_path" locale-gen
-
 echo "Recreate the initramfs image..."
 arch-chroot "$mount_path" mkinitcpio -P
-
-echo "Set the root passwd..."
-while true; do
-    arch-chroot "$mount_path" passwd || continue
-    break
-done
 
 echo "Installing grub..."
 arch-chroot "$mount_path" grub-install --target=x86_64-efi --efi-directory="${boot_path:4}" --bootloader-id=GRUB
