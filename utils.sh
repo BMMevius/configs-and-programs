@@ -176,8 +176,3 @@ parse_config() {
     export username
     export gpu_config_folders
 }
-
-parse_config
-
-echo ${packages[@]}
-echo ${gpu_config_folders[@]}
