@@ -32,9 +32,9 @@ arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 
-rsync -rf ./base/ "$mount_path"
-rsync -rf ./user-home/ "$mount_path/home/bastiaan"
-rsync -rf "${gpu_config_folders[@]}" "$mount_path"
+rsync -a ./base/ "$mount_path"
+rsync -a ./user-home/ "$mount_path/home/bastiaan"
+rsync -a "${gpu_config_folders[@]}" "$mount_path"
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
