@@ -4,13 +4,18 @@ source utils.sh
 
 parse_config
 
-if [ "$(prompt_choice "Connect to wifi?" "y" "n")" = "y" ]; then
-    read -rp "SSID: " ssid
-    read -rp "Passphrase: " passphrase
-    iwctl --passphrase "$passphrase" station wlan0 connect "$ssid"
-    # IP-address is from Google
-    while true; do ping -c 1 142.250.179.206 &>/dev/null && break; done
-fi
+while true; do
+    if [ "$(prompt_choice "Connect to wifi?" "y" "n")" = "y" ]; then
+        read -rp "SSID: " ssid
+        read -rp "Passphrase: " passphrase
+        iwctl --passphrase "$passphrase" station wlan0 connect "$ssid" || continue
+        # IP-address is from Google
+        while true; do ping -c 1 142.250.179.206 &>/dev/null && break; done
+        break
+    else
+        break
+    fi
+done
 
 if [ "$(prompt_choice "Format disks? (does unmount, format, and remount)" "y" "n")" = "y" ]; then
     fdisk -l
@@ -30,7 +35,10 @@ pacstrap "$mount_path" "${packages[@]}"
 echo "Creating user..."
 arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
-arch-chroot "$mount_path" passwd "$username"
+while true; do
+    arch-chroot "$mount_path" passwd "$username" || continue
+    break
+done
 
 rsync -a ./base/ "$mount_path"
 rsync -a ./user-home/ "$mount_path/home/bastiaan"
@@ -66,7 +74,10 @@ echo "Recreate the initramfs image..."
 arch-chroot "$mount_path" mkinitcpio -P
 
 echo "Set the root passwd..."
-arch-chroot "$mount_path" passwd
+while true; do
+    arch-chroot "$mount_path" passwd || continue
+    break
+done
 
 echo "Installing grub..."
 arch-chroot "$mount_path" grub-install --target=x86_64-efi --efi-directory="${boot_path:4}" --bootloader-id=GRUB
