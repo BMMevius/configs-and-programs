@@ -66,12 +66,12 @@ parse_config() {
     nvidia_packages=(nvidia nvidia-utils nvidia-settings)
     secondary_nvidia_packages=(nvidia-prime)
     nvidia_services=(nvidia-persistenced.service)
-    nvidia_configs_folder="./nvidia/**"
-    secondary_nvidia_configs_folder="./nvidia-prime/**"
+    nvidia_configs_folder="./nvidia/"
+    secondary_nvidia_configs_folder="./nvidia-prime/"
     intel_packages=(mesa lib32-mesa xf86-video-intel vulkan-intel intel-media-driver libva-intel-driver intel-gpu-tools)
-    intel_configs_folder="./intel/**"
+    intel_configs_folder="./intel/"
     amd_packages=(mesa lib32-mesa xf86-video-amdgpu amdvlk lib32-amdvlk libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau radeontop)
-    amd_configs_folder="./amd/**"
+    amd_configs_folder="./amd/"
 
     prev_section=0
     while IFS= read -r line; do
