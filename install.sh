@@ -32,6 +32,10 @@ arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
 arch-chroot "$mount_path" passwd "$username"
 
+cp -rf ./base/** "$mount_path"
+cp -rf ./user/** "$mount_path/home/$username"
+cp -rf "${gpu_config_folders[@]}" "$mount_path"
+
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
 arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
@@ -55,10 +59,6 @@ arch-chroot "$mount_path" ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/local
 echo "Generate /etc/adjtime..."
 arch-chroot "$mount_path" hwclock --systohc
 
-cp -rf ./base/** "$mount_path"
-cp -rf ./user/** "$mount_path/home/$username"
-cp -rf "${gpu_config_folders[@]}" "$mount_path"
-
 echo "Generate the locales..."
 arch-chroot "$mount_path" locale-gen
 
@@ -71,3 +71,8 @@ arch-chroot "$mount_path" passwd
 echo "Installing grub..."
 arch-chroot "$mount_path" grub-install --target=x86_64-efi --efi-directory="${boot_path:4}" --bootloader-id=GRUB
 arch-chroot "$mount_path" grub-mkconfig -o "${boot_path:4}/grub/grub.cfg"
+
+echo "Executing custom commands..."
+for cmd in "${commands[@]}"; do
+    arch-chroot "$mount_path" su - "$username" -c "$cmd"
+done
