@@ -56,7 +56,7 @@ install_packages_from_file() {
 }
 
 parse_config() {
-    config_path="./config.conf"
+    config_path="$(dirname "$0")/config.conf"
     packages=()
     services=()
     commands=()
@@ -66,12 +66,12 @@ parse_config() {
     nvidia_packages=(nvidia nvidia-utils nvidia-settings lib32-nvidia-utils)
     secondary_nvidia_packages=(nvidia-prime)
     nvidia_services=(nvidia-persistenced.service)
-    nvidia_configs_folder="./nvidia/"
-    secondary_nvidia_configs_folder="./nvidia-prime/"
+    nvidia_configs_folder="$(dirname "$0")/nvidia/"
+    secondary_nvidia_configs_folder="$(dirname "$0")/nvidia-prime/"
     intel_packages=(mesa lib32-mesa xf86-video-intel vulkan-intel intel-media-driver libva-intel-driver intel-gpu-tools)
-    intel_configs_folder="./intel/"
+    intel_configs_folder="$(dirname "$0")/intel/"
     amd_packages=(mesa lib32-mesa xf86-video-amdgpu amdvlk lib32-amdvlk libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau radeontop)
-    amd_configs_folder="./amd/"
+    amd_configs_folder="$(dirname "$0")/amd/"
 
     prev_section=0
     while IFS= read -r line; do

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source utils.sh
+source "$(dirname "$0")/utils.sh"
 
 parse_config
 
@@ -24,7 +24,7 @@ elif [ "$(prompt_choice "Mount disks?" "y" "n")" == "y" ]; then
     prompt_custom_choice "Mount <disk> <mount path>" 'export disk=%s; export mount_path=%s; mkdir -p $mount_path; mount $disk $mount_path'
 fi
 
-cp ./base/etc/pacman.conf /etc/pacman.conf
+cp "$(dirname "$0")/base/etc/pacman.conf" /etc/pacman.conf
 
 echo "Ensure the system clock is accurate..."
 timedatectl set-ntp true
