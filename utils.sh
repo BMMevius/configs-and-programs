@@ -148,14 +148,16 @@ parse_config() {
                     secondary_gpu=${split_on_equals[1]}
                     case "$secondary_gpu" in
                     "nvidia")
-                        packages+=("${secondary_nvidia_packages[@]}")
+                        packages+=("${nvidia_packages[@]}" "${secondary_nvidia_packages[@]}")
                         services+=("${nvidia_services[@]}")
                         gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
                     ;;
                     "intel")
+                        packages+=("${intel_packages[@]}")
                         gpu_config_folders+=("$intel_configs_folder")
                     ;;
                     "amd")
+                        packages+=("${amd_packages[@]}")
                         gpu_config_folders+=("$amd_configs_folder")
                     ;;
                     esac
@@ -174,3 +176,8 @@ parse_config() {
     export username
     export gpu_config_folders
 }
+
+parse_config
+
+echo ${packages[@]}
+echo ${gpu_config_folders[@]}
