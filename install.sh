@@ -55,12 +55,12 @@ while true; do
     break
 done
 
-echo "Generate the locales..."
-arch-chroot "$mount_path" locale-gen
-
 rsync -a ./base/ "$mount_path"
 rsync -a ./user-home/ "$mount_path/home/bastiaan"
 rsync -a "${gpu_config_folders[@]}" "$mount_path"
+
+echo "Generate the locales..."
+arch-chroot "$mount_path" locale-gen
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
