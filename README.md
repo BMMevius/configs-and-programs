@@ -41,6 +41,5 @@
 
 - Rocket League does not work (laptop may be too old?)
 - League of Legends start up time is minutes
-- Office not yet added
 - Docker GPU does not work yet
 - Test Wacom tablet and add dependencies
