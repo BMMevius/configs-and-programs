@@ -87,5 +87,6 @@ arch-chroot "$mount_path" grub-mkconfig -o "${boot_path:4}/grub/grub.cfg"
 
 echo "Executing custom commands..."
 for cmd in "${commands[@]}"; do
+    echo arch-chroot "$mount_path" su - "$username" -c "$cmd"
     arch-chroot "$mount_path" su - "$username" -c "$cmd"
 done
