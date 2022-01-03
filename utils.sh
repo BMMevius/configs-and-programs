@@ -149,7 +149,7 @@ parse_config() {
                     case "$secondary_gpu" in
                     "nvidia")
                         packages+=("${nvidia_packages[@]}" "${secondary_nvidia_packages[@]}")
-                        services+=("${nvidia_services[@]}")
+                        # services+=("${nvidia_services[@]}")
                         gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
                     ;;
                     "intel")
