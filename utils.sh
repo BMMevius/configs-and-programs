@@ -48,8 +48,8 @@ install_packages_from_file() {
 
     while IFS= read -r line; do
         if [ "${line:0:9}" = "packages=" ]; then
-            IFS='=' read -r -a packages <<< "$line"
-            IFS=' ' read -r -a package_array <<< "${packages[1]}"
+            IFS='=' read -r -a packages <<<"$line"
+            IFS=' ' read -r -a package_array <<<"${packages[1]}"
             $cmd "${package_array[*]}"
         fi
     done <"$file"
@@ -65,7 +65,7 @@ parse_config() {
     gpu_config_folders=()
     nvidia_packages=(nvidia nvidia-utils nvidia-settings lib32-nvidia-utils)
     secondary_nvidia_packages=(nvidia-prime)
-    nvidia_services=(nvidia-persistenced.service)
+    nvidia_services=()
     nvidia_configs_folder="$(dirname "$0")/nvidia/"
     secondary_nvidia_configs_folder="$(dirname "$0")/nvidia-prime/"
     intel_packages=(mesa lib32-mesa xf86-video-intel vulkan-intel intel-media-driver libva-intel-driver intel-gpu-tools)
@@ -76,92 +76,92 @@ parse_config() {
     prev_section=0
     while IFS= read -r line; do
         case "$line" in
-            \[*\])
-                # The slicing removes the brackets
-                prev_section=${line:1:-1}
+        \[*\])
+            # The slicing removes the brackets
+            prev_section=${line:1:-1}
             ;;
-            packages=*)
-                IFS='=' read -r -a split_on_equals <<< "$line"
-                IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
-                packages+=("${list[@]}")
+        packages=*)
+            IFS='=' read -r -a split_on_equals <<<"$line"
+            IFS=' ' read -r -a list <<<"${split_on_equals[1]}"
+            packages+=("${list[@]}")
             ;;
-            aur-packages=*)
-                IFS='=' read -r -a split_on_equals <<< "$line"
-                IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
-                aur_packages+=("${list[@]}")
+        aur-packages=*)
+            IFS='=' read -r -a split_on_equals <<<"$line"
+            IFS=' ' read -r -a list <<<"${split_on_equals[1]}"
+            aur_packages+=("${list[@]}")
             ;;
-            services=*)
-                IFS='=' read -r -a split_on_equals <<< "$line"
-                IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
-                services+=("${list[@]}")
+        services=*)
+            IFS='=' read -r -a split_on_equals <<<"$line"
+            IFS=' ' read -r -a list <<<"${split_on_equals[1]}"
+            services+=("${list[@]}")
             ;;
-            groups=*)
-                IFS='=' read -r -a split_on_equals <<< "$line"
-                IFS=' ' read -r -a list <<< "${split_on_equals[1]}"
-                groups+=("${list[@]}")
+        groups=*)
+            IFS='=' read -r -a split_on_equals <<<"$line"
+            IFS=' ' read -r -a list <<<"${split_on_equals[1]}"
+            groups+=("${list[@]}")
             ;;
-            command=*)
-                IFS='=' read -r -a split_on_equals <<< "$line"
-                commands+=("${split_on_equals[1]}")
+        command=*)
+            IFS='=' read -r -a split_on_equals <<<"$line"
+            commands+=("${split_on_equals[1]}")
             ;;
-            boot-path=*)
-                if [ "$prev_section" = "base" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    boot_path=${split_on_equals[1]}
-                fi
+        boot-path=*)
+            if [ "$prev_section" = "base" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                boot_path=${split_on_equals[1]}
+            fi
             ;;
-            mount-path=*)
-                if [ "$prev_section" = "base" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    mount_path=${split_on_equals[1]}
-                fi
+        mount-path=*)
+            if [ "$prev_section" = "base" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                mount_path=${split_on_equals[1]}
+            fi
             ;;
-            username=*)
-                if [ "$prev_section" = "base" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    username=${split_on_equals[1]}
-                fi
+        username=*)
+            if [ "$prev_section" = "base" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                username=${split_on_equals[1]}
+            fi
             ;;
-            primary=*)
-                if [ "$prev_section" = "gpu" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    primary_gpu=${split_on_equals[1]}
-                    case "$primary_gpu" in
-                    "nvidia")
-                        packages+=("${nvidia_packages[@]}")
-                        gpu_config_folders+=("$nvidia_configs_folder")
+        primary=*)
+            if [ "$prev_section" = "gpu" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                primary_gpu=${split_on_equals[1]}
+                case "$primary_gpu" in
+                "nvidia")
+                    packages+=("${nvidia_packages[@]}")
+                    gpu_config_folders+=("$nvidia_configs_folder")
                     ;;
-                    "intel")
-                        packages+=("${intel_packages[@]}")
-                        gpu_config_folders+=("$intel_configs_folder")
+                "intel")
+                    packages+=("${intel_packages[@]}")
+                    gpu_config_folders+=("$intel_configs_folder")
                     ;;
-                    "amd")
-                        packages+=("${amd_packages[@]}")
-                        gpu_config_folders+=("$amd_configs_folder")
+                "amd")
+                    packages+=("${amd_packages[@]}")
+                    gpu_config_folders+=("$amd_configs_folder")
                     ;;
-                    esac
-                fi
+                esac
+            fi
             ;;
-            secondary=*)
-                if [ "$prev_section" = "gpu" ]; then
-                    IFS='=' read -r -a split_on_equals <<< "$line"
-                    secondary_gpu=${split_on_equals[1]}
-                    case "$secondary_gpu" in
-                    "nvidia")
-                        packages+=("${nvidia_packages[@]}" "${secondary_nvidia_packages[@]}")
-                        # services+=("${nvidia_services[@]}")
-                        gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
+        secondary=*)
+            if [ "$prev_section" = "gpu" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                secondary_gpu=${split_on_equals[1]}
+                case "$secondary_gpu" in
+                "nvidia")
+                    packages+=("${nvidia_packages[@]}" "${secondary_nvidia_packages[@]}")
+                    services+=("${nvidia_services[@]}")
+                    gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
                     ;;
-                    "intel")
-                        packages+=("${intel_packages[@]}")
-                        gpu_config_folders+=("$intel_configs_folder")
+                "intel")
+                    packages+=("${intel_packages[@]}")
+                    gpu_config_folders+=("$intel_configs_folder")
                     ;;
-                    "amd")
-                        packages+=("${amd_packages[@]}")
-                        gpu_config_folders+=("$amd_configs_folder")
+                "amd")
+                    packages+=("${amd_packages[@]}")
+                    gpu_config_folders+=("$amd_configs_folder")
                     ;;
-                    esac
-                fi
+                esac
+            fi
             ;;
         esac
     done <"$config_path"
