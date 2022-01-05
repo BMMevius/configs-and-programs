@@ -63,14 +63,9 @@ parse_config() {
     groups=()
     aur_packages=()
     gpu_config_folders=()
-    nvidia_packages=(nvidia nvidia-utils nvidia-settings lib32-nvidia-utils)
-    secondary_nvidia_packages=(nvidia-prime)
-    nvidia_services=()
     nvidia_configs_folder="$(dirname "$0")/nvidia/"
     secondary_nvidia_configs_folder="$(dirname "$0")/nvidia-prime/"
-    intel_packages=(mesa lib32-mesa xf86-video-intel vulkan-intel intel-media-driver libva-intel-driver intel-gpu-tools)
     intel_configs_folder="$(dirname "$0")/intel/"
-    amd_packages=(mesa lib32-mesa xf86-video-amdgpu amdvlk lib32-amdvlk libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau radeontop)
     amd_configs_folder="$(dirname "$0")/amd/"
 
     prev_section=0
@@ -128,15 +123,12 @@ parse_config() {
                 primary_gpu=${split_on_equals[1]}
                 case "$primary_gpu" in
                 "nvidia")
-                    packages+=("${nvidia_packages[@]}")
                     gpu_config_folders+=("$nvidia_configs_folder")
                     ;;
                 "intel")
-                    packages+=("${intel_packages[@]}")
                     gpu_config_folders+=("$intel_configs_folder")
                     ;;
                 "amd")
-                    packages+=("${amd_packages[@]}")
                     gpu_config_folders+=("$amd_configs_folder")
                     ;;
                 esac
@@ -148,16 +140,12 @@ parse_config() {
                 secondary_gpu=${split_on_equals[1]}
                 case "$secondary_gpu" in
                 "nvidia")
-                    packages+=("${nvidia_packages[@]}" "${secondary_nvidia_packages[@]}")
-                    services+=("${nvidia_services[@]}")
                     gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
                     ;;
                 "intel")
-                    packages+=("${intel_packages[@]}")
                     gpu_config_folders+=("$intel_configs_folder")
                     ;;
                 "amd")
-                    packages+=("${amd_packages[@]}")
                     gpu_config_folders+=("$amd_configs_folder")
                     ;;
                 esac
