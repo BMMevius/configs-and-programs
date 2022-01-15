@@ -81,9 +81,8 @@ arch-chroot "$mount_path" systemctl enable "${services[@]}"
 echo "Recreate the initramfs image..."
 arch-chroot "$mount_path" mkinitcpio -P
 
-echo "Installing grub..."
-arch-chroot "$mount_path" grub-install --target=x86_64-efi --efi-directory="${boot_path:4}" --bootloader-id=GRUB
-arch-chroot "$mount_path" grub-mkconfig -o "${boot_path:4}/grub/grub.cfg"
+echo "Installing rEFInd..."
+arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed/PreLoader.efi
 
 echo "Executing custom commands..."
 for cmd in "${commands[@]}"; do
