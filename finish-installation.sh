@@ -18,7 +18,7 @@ git checkout main
 yay -Sy go
 go get
 ./build
-sudo cp blobfuse2 /usr/bin
+sudo mv blobfuse2 /usr/local/bin/blobfuse2
 
 # Clean up
 cd ~
@@ -26,16 +26,6 @@ rm -rf azure-storage-fuse
 yay -R go
 
 # Mount azure blob filesystem
-mount_path=/run/media/$USER/azure
-config_file_path=~/azure-config.yml
+mount_path=/run/media/azure
 sudo mkdir "$mount_path"
-sudo chown "$USER" "$mount_path"
-if [ -z "$(blobfuse2 mount all "$mount_path" --config-file=$config_file_path > /dev/null 2>&1)" ]; then
-    echo "The config file located at $config_file_path probably did not have a key yet.
-
-Put the key in the azure config and execute the following command:
-$ blobfuse2 mount all $mount_path --config-file=$config_file_path
-    
-You can get this key at:
-https://portal.azure.com/#@sorama.eu/resource/subscriptions/e6307c1b-ee67-4f60-a476-dc9502946fed/resourceGroups/AzureBackupRG_westeurope_1/providers/Microsoft.Storage/storageAccounts/soramasharedstorage/keys"
-fi
+sudo systemctl start blobfuse2
