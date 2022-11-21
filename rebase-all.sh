@@ -13,8 +13,12 @@ git checkout laptop
 git rebase master
 git push -f
 
+git checkout laptop-personal
+git rebase laptop
+git push -f
+
 git checkout work
-git rebase master
+git rebase laptop
 git push -f
 
 git checkout master
