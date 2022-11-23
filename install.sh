@@ -24,7 +24,7 @@ elif [ "$(prompt_choice "Mount disks?" "y" "n")" == "y" ]; then
     prompt_custom_choice "Mount <disk> <mount path>" 'export disk=%s; export mount_path=%s; mkdir -p $mount_path; mount $disk $mount_path'
 fi
 
-cp "$(dirname "$0")/base/etc/pacman.conf" /etc/pacman.conf
+cp "$(dirname "$0")/filesystem/etc/pacman.conf" /etc/pacman.conf
 
 echo "Ensure the system clock is accurate..."
 timedatectl set-ntp true
@@ -56,9 +56,8 @@ while true; do
 done
 
 echo "Copying files..."
-rsync -a ./base/ "$mount_path"
+rsync -a ./filesystem/ "$mount_path"
 rsync -a ./user-home/ "$mount_path/home/bastiaan"
-rsync -a "${gpu_config_folders[@]}" "$mount_path"
 arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
 echo "Generate the locales..."

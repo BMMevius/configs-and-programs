@@ -62,11 +62,6 @@ parse_config() {
     commands=()
     groups=()
     aur_packages=()
-    gpu_config_folders=()
-    nvidia_configs_folder="$(dirname "$0")/nvidia/"
-    secondary_nvidia_configs_folder="$(dirname "$0")/nvidia-prime/"
-    intel_configs_folder="$(dirname "$0")/intel/"
-    amd_configs_folder="$(dirname "$0")/amd/"
 
     prev_section=0
     while IFS= read -r line; do
@@ -117,40 +112,6 @@ parse_config() {
                 username=${split_on_equals[1]}
             fi
             ;;
-        primary=*)
-            if [ "$prev_section" = "gpu" ]; then
-                IFS='=' read -r -a split_on_equals <<<"$line"
-                primary_gpu=${split_on_equals[1]}
-                case "$primary_gpu" in
-                "nvidia")
-                    gpu_config_folders+=("$nvidia_configs_folder")
-                    ;;
-                "intel")
-                    gpu_config_folders+=("$intel_configs_folder")
-                    ;;
-                "amd")
-                    gpu_config_folders+=("$amd_configs_folder")
-                    ;;
-                esac
-            fi
-            ;;
-        secondary=*)
-            if [ "$prev_section" = "gpu" ]; then
-                IFS='=' read -r -a split_on_equals <<<"$line"
-                secondary_gpu=${split_on_equals[1]}
-                case "$secondary_gpu" in
-                "nvidia")
-                    gpu_config_folders+=("$secondary_nvidia_configs_folder" "$nvidia_configs_folder")
-                    ;;
-                "intel")
-                    gpu_config_folders+=("$intel_configs_folder")
-                    ;;
-                "amd")
-                    gpu_config_folders+=("$amd_configs_folder")
-                    ;;
-                esac
-            fi
-            ;;
         esac
     done <"$config_path"
 
@@ -162,5 +123,4 @@ parse_config() {
     export mount_path
     export boot_path
     export username
-    export gpu_config_folders
 }
