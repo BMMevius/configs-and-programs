@@ -1,0 +1,9 @@
+[PlasmaRunnerManager]
+migrated=true
+
+[Plugins]
+baloosearchEnabled=true
+bookmarksEnabled=false
+browserhistoryEnabled=false
+browsertabsEnabled=false
+webshortcutsEnabled=false
