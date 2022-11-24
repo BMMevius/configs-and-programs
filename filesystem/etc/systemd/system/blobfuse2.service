@@ -27,8 +27,8 @@ Environment=attr_timeout=240
 Environment=entry_timeout=240
 Environment=negative_timeout=120
 Type=simple
-ExecStart=/usr/local/bin/blobfuse2 mount all ${BlobMountingPoint} --allow-other --foreground=true --virtual-directory=true --tmp-path=${BlobTmp} --config-file=${BlobConfigFile} --log-level=${BlobLogLevel}  
-ExecStop=/usr/local/bin/blobfuse2 unmount all
+ExecStart=blobfuse2 mount ${BlobMountingPoint} --container-name=psv --allow-other --foreground=true --virtual-directory=true --tmp-path=${BlobTmp} --config-file=${BlobConfigFile} --log-level=${BlobLogLevel}  
+ExecStop=fusermount -u ${BlobMountingPoint}
 
 [Install]
 WantedBy=multi-user.target
