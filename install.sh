@@ -19,9 +19,9 @@ done
 
 if [ "$(prompt_choice "Format disks? (does unmount, format, and remount)" "y" "n")" = "y" ]; then
     fdisk -l
-    prompt_custom_choice "Format <disk> <type> <mount path>" 'export disk=%s; umount $disk; mkfs -t %s $disk; export mount_path=%s; mkdir -p $mount_path; mount $disk $mount_path'
+    prompt_custom_choice "Format <disk> <type> <mount path>" 'export disk=%s; umount $disk; mkfs -t %s $disk; export mount_path=%s; mount --mkdir $disk $mount_path'
 elif [ "$(prompt_choice "Mount disks?" "y" "n")" == "y" ]; then
-    prompt_custom_choice "Mount <disk> <mount path>" 'export disk=%s; export mount_path=%s; mkdir -p $mount_path; mount $disk $mount_path'
+    prompt_custom_choice "Mount <disk> <mount path>" 'export disk=%s; export mount_path=%s; mount --mkdir $disk $mount_path'
 fi
 
 cp "$(dirname "$0")/filesystem/etc/pacman.conf" /etc/pacman.conf
