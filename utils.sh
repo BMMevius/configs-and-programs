@@ -28,6 +28,7 @@ prompt_custom_choice() {
         if [ "s" == "${REPLY,,}" ]; then
             return 0
         else
+            # shellcheck disable=SC2059
             bash -c "$(printf "\n$cmd\n" "$REPLY")" || echo "Wrong choice..."
         fi
     done
