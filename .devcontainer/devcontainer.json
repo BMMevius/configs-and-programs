@@ -17,7 +17,8 @@
 				"timonwong.shellcheck",
 				"DavidAnson.vscode-markdownlint",
 				"cschleiden.vscode-github-actions",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"mads-hartmann.bash-ide-vscode"
 			]
 		}
 	}
