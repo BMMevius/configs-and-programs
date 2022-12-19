@@ -2,7 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
 	"name": "Alpine",
-	"image": "mcr.microsoft.com/devcontainers/base:alpine-3.16",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
@@ -14,7 +16,8 @@
 				"hangxingliu.vscode-systemd-support",
 				"timonwong.shellcheck",
 				"DavidAnson.vscode-markdownlint",
-				"cschleiden.vscode-github-actions"
+				"cschleiden.vscode-github-actions",
+				"ms-azuretools.vscode-docker"
 			]
 		}
 	}
