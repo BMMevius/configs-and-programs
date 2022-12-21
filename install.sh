@@ -24,8 +24,12 @@ cp "$(dirname "$0")/filesystem/etc/pacman.conf" /etc/pacman.conf
 echo "Ensure the system clock is accurate..."
 timedatectl set-ntp true
 
+echo "Updating package keyring..."
+pacman-key --populate archlinux
+pacman-key --refresh-keys
+
 echo "Install packages..."
-pacstrap "$mount_path" "${packages[@]}"
+pacstrap -K "$mount_path" "${packages[@]}"
 
 echo "Generate an fstab file..."
 genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
