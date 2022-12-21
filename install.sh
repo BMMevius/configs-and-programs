@@ -81,3 +81,7 @@ arch-chroot "$mount_path" mkinitcpio -P
 
 echo "Installing systemd-boot..."
 arch-chroot "$mount_path" bootctl install
+
+echo "Installing Oh-My-Zsh..."
+arch-chroot -u "$username" "$mount_path" bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+arch-chroot "$mount_path" chsh -s "$(which zsh)"
