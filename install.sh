@@ -80,9 +80,3 @@ arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed
 
 echo "Configuring rEFInd..."
 cp ./refind/refind.conf /mnt/boot/EFI/refind/refind.conf
-
-echo "Executing custom commands..."
-for cmd in "${commands[@]}"; do
-    echo arch-chroot "$mount_path" su - "$username" -c "$cmd"
-    arch-chroot "$mount_path" su - "$username" -c "$cmd"
-done

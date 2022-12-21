@@ -60,7 +60,6 @@ parse_config() {
     config_path="$(dirname "$0")/config.conf"
     packages=()
     services=()
-    commands=()
     groups=()
     aur_packages=()
 
@@ -91,10 +90,6 @@ parse_config() {
             IFS=' ' read -r -a list <<<"${split_on_equals[1]}"
             groups+=("${list[@]}")
             ;;
-        command=*)
-            IFS='=' read -r -a split_on_equals <<<"$line"
-            commands+=("${split_on_equals[1]}")
-            ;;
         boot-path=*)
             if [ "$prev_section" = "base" ]; then
                 IFS='=' read -r -a split_on_equals <<<"$line"
@@ -120,7 +115,6 @@ parse_config() {
     export aur_packages
     export services
     export groups
-    export commands
     export mount_path
     export boot_path
     export username
