@@ -8,6 +8,9 @@
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "zsh"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
