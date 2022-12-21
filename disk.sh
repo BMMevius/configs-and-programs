@@ -43,6 +43,7 @@ wipe_partition() {
 }
 
 export mount_path=/mnt
+umount "/mnt/boot"
 select_partition "Partition to install arch linux on: "
 wipe_partition "$partition" ext4
 e2label "/dev/$partition" "arch_os"
