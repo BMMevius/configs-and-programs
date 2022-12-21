@@ -79,8 +79,5 @@ arch-chroot "$mount_path" systemctl enable "${services[@]}"
 echo "Recreate the initramfs image..."
 arch-chroot "$mount_path" mkinitcpio -P
 
-echo "Installing rEFInd..."
-arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed/PreLoader.efi
-
-echo "Configuring rEFInd..."
-cp ./refind/refind.conf /mnt/boot/EFI/refind/refind.conf
+echo "Installing systemd-boot..."
+arch-chroot "$mount_path" bootctl install
