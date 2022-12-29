@@ -17,6 +17,10 @@ git checkout laptop-personal
 git rebase laptop
 git push -f
 
+git checkout laptop-windows-theme
+git rebase laptop
+git push -f
+
 git checkout work
 git rebase laptop
 git push -f
