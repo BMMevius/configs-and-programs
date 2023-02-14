@@ -5,7 +5,7 @@ Requires=network-online.target
 
 [Service]
 # Configures the mountpoint.<path/to/the/mounting/point>
-Environment=BlobMountingPoint=/run/media/azure
+Environment=BlobMountingPoint=$HOME/azure
 # Configures the tmp location for the cache. Always configure the fastest disk (SSD or ramdisk) for best performance.
 Environment=BlobTmp=/tmp/azure-blob
 # Config file path
@@ -27,7 +27,7 @@ Environment=attr_timeout=240
 Environment=entry_timeout=240
 Environment=negative_timeout=120
 Type=simple
-ExecStart=blobfuse2 mount ${BlobMountingPoint} --container-name=psv --allow-other --foreground=true --virtual-directory=true --tmp-path=${BlobTmp} --config-file=${BlobConfigFile} --log-level=${BlobLogLevel}  
+ExecStart=blobfuse2 mount all ${BlobMountingPoint} --allow-other --foreground=true --virtual-directory=true --tmp-path=${BlobTmp} --config-file=${BlobConfigFile} --log-level=${BlobLogLevel}
 ExecStop=fusermount -u ${BlobMountingPoint}
 
 [Install]
