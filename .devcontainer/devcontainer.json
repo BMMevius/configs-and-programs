@@ -8,9 +8,6 @@
 	"features": {
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
-	"settings": {
-		"terminal.integrated.defaultProfile.linux": "zsh"
-	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -22,7 +19,10 @@
 				"cschleiden.vscode-github-actions",
 				"ms-azuretools.vscode-docker",
 				"mads-hartmann.bash-ide-vscode"
-			]
+			],
+			"settings": {
+				"terminal.integrated.defaultProfile.linux": "zsh"
+			}
 		}
 	}
 }
