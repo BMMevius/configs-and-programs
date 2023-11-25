@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -72,7 +73,7 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker node npm nvm pip history-search-multi-word yarn vscode archlinux)
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
