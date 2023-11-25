@@ -9,6 +9,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# shellcheck disable=SC2034
 ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
@@ -71,8 +72,10 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+# shellcheck disable=SC2034
 plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker node npm nvm pip history-search-multi-word yarn vscode archlinux)
 
+# shellcheck disable=SC1091
 source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
