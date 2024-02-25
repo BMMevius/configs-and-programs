@@ -54,9 +54,15 @@ while true; do
     break
 done
 
+echo "Replacing variables in files that need copying..."
+rsync -a ./filesystem/ /tmp/filesystem/
+rsync -a ./user-home/ /tmp/user-home/
+find /tmp/filesystem/ -type f -exec sed -i "s/<user>/$username/g" {} \;
+find /tmp/user-home/ -type f -exec sed -i "s/<user>/$username/g" {} \;
+
 echo "Copying files..."
-rsync -a ./filesystem/ "$mount_path"
-rsync -a ./user-home/ "$mount_path/home/$username"
+rsync -a /tmp/filesystem/ "$mount_path"
+rsync -a /tmp/user-home/ "$mount_path/home/$username"
 arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
 echo "Generate the locales..."
