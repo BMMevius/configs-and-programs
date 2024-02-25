@@ -67,16 +67,16 @@ rsync -a /tmp/filesystem/ "$mount_path"
 rsync -a /tmp/user-home/ "$mount_path/home/$username"
 arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
-echo "Generate the locales..."
-arch-chroot "$mount_path" locale-gen
-
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
 arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
 arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel"
 
 echo "Installing additional aur packages..."
-arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]}" --disable-download-timeout
+arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]} --disable-download-timeout"
+
+echo "Generate the locales..."
+arch-chroot "$mount_path" locale-gen
 
 echo "Add user to groups..."
 arch-chroot "$mount_path" usermod -aG "${groups[@]}" "$username"
