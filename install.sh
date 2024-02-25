@@ -29,7 +29,7 @@ pacman-key --populate archlinux
 pacman-key --refresh-keys
 
 echo "Install packages..."
-pacstrap -K "$mount_path" "${packages[@]}"
+pacstrap -K "$mount_path" "${packages[@]}" --disable-download-timeout
 
 echo "Generate an fstab file..."
 genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
@@ -76,7 +76,7 @@ arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.o
 arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel"
 
 echo "Installing additional aur packages..."
-arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]}"
+arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]}" --disable-download-timeout
 
 echo "Add user to groups..."
 arch-chroot "$mount_path" usermod -aG "${groups[@]}" "$username"
