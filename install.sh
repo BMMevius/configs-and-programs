@@ -87,8 +87,8 @@ arch-chroot "$mount_path" systemctl enable "${services[@]}"
 echo "Recreate the initramfs image..."
 arch-chroot "$mount_path" mkinitcpio -P
 
-echo "Installing systemd-boot..."
-arch-chroot "$mount_path" bootctl install
+echo "Installing rEFInd..."
+arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed/PreLoader.efi
 
 echo "Installing Oh-My-Zsh..."
 arch-chroot -u "$username" "$mount_path" bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
