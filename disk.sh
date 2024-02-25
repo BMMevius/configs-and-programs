@@ -72,7 +72,7 @@ This will create a boot partition and a partition for the OS.
                 umount "$disk"
                 sfdisk --delete "$disk"
                 sfdisk "$disk" <<EOF
-0,2048
+512MB
 ;
 EOF
                 sfdisk --change-id "$disk" 1 C12A7328-F81F-11D2-BA4B-00A0C93EC93B
