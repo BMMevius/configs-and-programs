@@ -94,5 +94,5 @@ root ALL=(ALL) ALL
 
 ## Read drop-in files from /etc/sudoers.d
 @includedir /etc/sudoers.d
-bastiaan ALL=(ALL) ALL
-bastiaan ALL= NOPASSWD: /usr/bin/pacman
+<user> ALL=(ALL) ALL
+<user> ALL= NOPASSWD: /usr/bin/pacman

@@ -56,7 +56,7 @@ done
 
 echo "Copying files..."
 rsync -a ./filesystem/ "$mount_path"
-rsync -a ./user-home/ "$mount_path/home/bastiaan"
+rsync -a ./user-home/ "$mount_path/home/$username"
 arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
 echo "Generate the locales..."
