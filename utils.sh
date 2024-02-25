@@ -108,6 +108,12 @@ parse_config() {
                 username=${split_on_equals[1]}
             fi
             ;;
+        hostname=*)
+            if [ "$prev_section" = "base" ]; then
+                IFS='=' read -r -a split_on_equals <<<"$line"
+                hostname=${split_on_equals[1]}
+            fi
+            ;;
         esac
     done <"$config_path"
 
@@ -118,4 +124,5 @@ parse_config() {
     export mount_path
     export boot_path
     export username
+    export hostname
 }
