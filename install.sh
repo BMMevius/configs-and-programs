@@ -82,9 +82,6 @@ arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]} --disa
 echo "Generate the locales..."
 arch-chroot "$mount_path" locale-gen
 
-echo "Generate the locales..."
-arch-chroot "$mount_path" locale-gen
-
 echo "Add user to groups..."
 arch-chroot "$mount_path" usermod -aG "${groups[@]}" "$username"
 
