@@ -91,5 +91,5 @@ echo "Installing rEFInd..."
 arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed/PreLoader.efi
 
 echo "Installing Oh-My-Zsh..."
-arch-chroot -u "$username" "$mount_path" bash -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+arch-chroot "$mount_path" su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 arch-chroot "$mount_path" chsh -s "$(which zsh)"
