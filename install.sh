@@ -90,6 +90,9 @@ arch-chroot "$mount_path" mkinitcpio -P
 echo "Installing rEFInd..."
 arch-chroot "$mount_path" refind-install --preloader /usr/share/preloader-signed/PreLoader.efi
 
+echo "Creating ssh key..."
+arch-chroot "$mount_path" su - "$username" -c "ssh-keygen"
+
 echo "Installing Oh-My-Zsh..."
 arch-chroot "$mount_path" su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 arch-chroot "$mount_path" chsh -s "$(which zsh)"
