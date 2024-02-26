@@ -64,8 +64,6 @@ find /tmp/user-home/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
 
 echo "Copying files..."
 rsync -a /tmp/filesystem/ "$mount_path"
-rsync -a /tmp/user-home/ "$mount_path/home/$username"
-arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
@@ -96,3 +94,8 @@ arch-chroot "$mount_path" su - "$username" -c "ssh-keygen"
 echo "Installing Oh-My-Zsh..."
 arch-chroot "$mount_path" su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 arch-chroot "$mount_path" chsh -s "$(which zsh)"
+
+echo "Copying user files..."
+rm -rf "$mount_path/home/$username"/.zshrc.*
+rsync -a /tmp/user-home/ "$mount_path/home/$username"
+arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
