@@ -73,7 +73,7 @@ arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.o
 arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel"
 
 echo "Installing additional aur packages..."
-arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]} --disable-download-timeout"
+arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]} --disable-download-timeout --answerclean None --answerdiff None --answeredit None --answerupgrade None --noremovemake --noconfirm"
 
 echo "Generate the locales..."
 arch-chroot "$mount_path" locale-gen
