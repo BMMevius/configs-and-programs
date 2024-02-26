@@ -8,7 +8,7 @@ git clone https://github.com/bilelmoussaoui/flatpak-zsh-completion "${ZSH_CUSTOM
 
 # Install fonts
 font_dir=/usr/local/share/fonts
-mkdir -p "$font_dir"
+sudo -S mkdir -p "$font_dir"
 
 # Install satoshi font
 curl -fsSLO https://api.fontshare.com/v2/fonts/download/satoshi
