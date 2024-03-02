@@ -46,6 +46,10 @@ while true; do
     break
 done
 
+echo "What will be your username?"
+read -r username
+echo "What will be your hostname?"
+read -r hostname
 echo "Creating user..."
 arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
