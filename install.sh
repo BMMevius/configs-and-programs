@@ -68,7 +68,7 @@ rsync -a /tmp/filesystem/ "$mount_path"
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
 arch-chroot "$mount_path" su - "$username" -c "git clone https://aur.archlinux.org/yay-bin.git $yay_dir"
-arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel"
+arch-chroot "$mount_path" su - "$username" -c "cd $yay_dir; makepkg -si; yay -Y --gendb; yay -Syu --devel --noconfirm"
 
 echo "Installing additional aur packages..."
 arch-chroot "$mount_path" su - "$username" -c "yay -Sy ${aur_packages[*]} --disable-download-timeout --answerclean None --answerdiff None --answeredit None --answerupgrade None --noremovemake --noconfirm"
