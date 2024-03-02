@@ -21,16 +21,16 @@ select_partition() {
     title=$1
 
     select_list "${partitions[*]}" "$title"
-    echo "Selected partition: $partition"
     export partition="/dev/$item"
+    echo "Selected partition: $partition"
 }
 
 select_disk() {
     title=$1
 
     select_list "${disks[*]}" "$title"
-    echo "Selected disk: $disk"
     export disk="/dev/$item"
+    echo "Selected disk: $disk"
 }
 
 wipe_partition() {
