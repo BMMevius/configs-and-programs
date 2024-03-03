@@ -94,8 +94,10 @@ select_partition "Partition to install arch linux on: "
 wipe_partition "$partition" ext4
 e2label "$partition" "arch_os"
 mount --mkdir "$partition" "$mount_path"
+export kernel_partition=$partition
 
 select_partition "Boot partition: "
 wipe_partition "$partition" fat
 fatlabel "$partition" "boot"
-mount --mkdir "$partition" "/mnt/boot"
+mount --mkdir "$partition" "$mount_path/boot"
+export boot_partition=$partition

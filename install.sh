@@ -17,7 +17,7 @@ while true; do
     fi
 done
 
-"$(dirname "$0")"/disk.sh
+source "$(dirname "$0")"/disk.sh
 
 cp "$(dirname "$0")/filesystem/etc/pacman.conf" /etc/pacman.conf
 
@@ -63,6 +63,7 @@ rsync -a ./filesystem/ /tmp/filesystem/
 rsync -a ./user-home/ /tmp/user-home/
 find /tmp/filesystem/ -type f -exec sed -i "s/<user>/$username/g" {} \;
 find /tmp/filesystem/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
+find /tmp/filesystem/ -type f -exec sed -i "s/<PARTUUID>/$(blkid "$kernel_partition" | awk '{print $7}')/g" {} \;
 find /tmp/user-home/ -type f -exec sed -i "s/<user>/$username/g" {} \;
 find /tmp/user-home/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
 
