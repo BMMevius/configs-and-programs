@@ -63,7 +63,7 @@ rsync -a ./filesystem/ /tmp/filesystem/
 rsync -a ./user-home/ /tmp/user-home/
 find /tmp/filesystem/ -type f -exec sed -i "s/<user>/$username/g" {} \;
 find /tmp/filesystem/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
-find /tmp/filesystem/ -type f -exec sed -i "s/<PARTUUID>/$(blkid "$kernel_partition" | awk '{print $7}')/g" {} \;
+find /tmp/filesystem/ -type f -exec sed -i "s/<PARTUUID>/$(blkid "$kernel_partition" | awk '{ gsub("\"", "", $6) } {print $6}')/g" {} \;
 find /tmp/user-home/ -type f -exec sed -i "s/<user>/$username/g" {} \;
 find /tmp/user-home/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
 
