@@ -12,13 +12,13 @@ sudo -S mkdir -p "$font_dir"
 # Install satoshi font
 curl -fsSLO https://api.fontshare.com/v2/fonts/download/satoshi
 unzip satoshi -d satoshi_fonts
-mv satoshi_fonts/* "$font_dir"
+sudo -S mv satoshi_fonts/* "$font_dir"
 rm -rf satoshi_fonts satoshi
 
 # Install mulish font
 git clone git@github.com:googlefonts/mulish.git
-mkdir -p "$font_dir/mulish"
-cp mulish/fonts/ttf "$font_dir/mulish"
+sudo -S mkdir -p "$font_dir/mulish"
+sudo -S cp -r mulish/fonts/ttf "$font_dir/mulish"
 rm -rf mulish
 
 # Update font cache
