@@ -57,7 +57,7 @@ install_packages_from_file() {
 }
 
 parse_config() {
-    config_path="$(dirname "$0")/config.conf"
+    config_path=$1
     packages=()
     services=()
     groups=()

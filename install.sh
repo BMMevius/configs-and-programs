@@ -2,7 +2,26 @@
 
 source "$(dirname "$0")/utils.sh"
 
-parse_config
+echo "What will be your username?"
+read -r username
+echo "What will be your hostname?"
+read -r hostname
+echo "Replacing variables in files that need copying..."
+tmp_location=/tmp/configs-and-programs/
+tmp_filesystem=$tmp_location/filesystem/
+tmp_user_home=$tmp_location/user-home/
+tmp_config=$tmp_location/config.conf
+rsync -a "$(dirname "$0")/filesystem" $tmp_location
+rsync -a "$(dirname "$0")/user-home" $tmp_location
+rsync -a "$(dirname "$0")/config.conf" $tmp_location
+find $tmp_filesystem -type f -exec sed -i "s/<user>/$username/g" {} \;
+find $tmp_filesystem -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
+find $tmp_filesystem -type f -exec sed -i "s/<PARTUUID>/$(blkid "$kernel_partition" | awk '{ gsub("\"", "", $6) } {print $6}')/g" {} \;
+find $tmp_user_home -type f -exec sed -i "s/<user>/$username/g" {} \;
+find $tmp_user_home -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
+find $tmp_config -type f -exec sed -i "s/<user>/$username/g" {} \;
+
+parse_config $tmp_config
 
 while true; do
     if [ "$(prompt_choice "Connect to wifi?" "y" "n")" = "y" ]; then
@@ -46,10 +65,6 @@ while true; do
     break
 done
 
-echo "What will be your username?"
-read -r username
-echo "What will be your hostname?"
-read -r hostname
 echo "Creating user..."
 arch-chroot "$mount_path" useradd -m "$username"
 echo "Give new password for login '$username'..."
@@ -57,15 +72,6 @@ while true; do
     arch-chroot "$mount_path" passwd "$username" || continue
     break
 done
-
-echo "Replacing variables in files that need copying..."
-rsync -a ./filesystem/ /tmp/filesystem/
-rsync -a ./user-home/ /tmp/user-home/
-find /tmp/filesystem/ -type f -exec sed -i "s/<user>/$username/g" {} \;
-find /tmp/filesystem/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
-find /tmp/filesystem/ -type f -exec sed -i "s/<PARTUUID>/$(blkid "$kernel_partition" | awk '{ gsub("\"", "", $6) } {print $6}')/g" {} \;
-find /tmp/user-home/ -type f -exec sed -i "s/<user>/$username/g" {} \;
-find /tmp/user-home/ -type f -exec sed -i "s/<hostname>/$hostname/g" {} \;
 
 echo "Copying files..."
 rsync -a /tmp/filesystem/ "$mount_path"
