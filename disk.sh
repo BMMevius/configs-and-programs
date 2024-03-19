@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-read -d "\n" -r -a partitions <<< "$(lsblk -l | awk '{if ($6=="part") print $1}')"
-read -d "\n" -r -a disks <<< "$(lsblk -l | awk '{if ($6=="disk") print $1}')"
+IFS=$'\n' read -d "\034" -r -a partitions <<< "$(lsblk -l | awk '{if ($6=="part") print $1}')\034"
+IFS=$'\n' read -d "\034" -r -a disks <<< "$(lsblk -l | awk '{if ($6=="disk") print $1}')\034"
 
 select_list() {
     read -r -a items <<< "$1"
@@ -44,7 +44,7 @@ wipe_partition() {
     PS3="Wipe partition? (This will destroy all data contained on that partition!) "
     select answer in "yes" "no"
     do
-        umount "$partition"
+        umount "$partition" || echo "Partition $partition cannot be unmounted. Continuing anyway..."
         case $answer in
             yes)
                 echo "Wiping off data from partition $partition..."
@@ -69,7 +69,7 @@ This will create a boot partition and a partition for the OS.
             yes)
                 select_disk "Disk to automatically partition: "
                 echo "Repartitioning disk $disk..."
-                umount "$disk"
+                umount "$disk" || echo "Disk $disk cannot be unmounted. Continuing anyway..."
                 sfdisk --delete "$disk"
                 sfdisk "$disk" <<EOF
 512MB
@@ -89,7 +89,8 @@ EOF
 automatic_disk_partitioning
 
 export mount_path=/mnt
-umount "/mnt/boot"
+export mount_boot_path="$mount_path/boot"
+umount "$mount_boot_path" || echo "The boot partition cannot be unmounted. Continuing anyway..."
 select_partition "Partition to install arch linux on: "
 wipe_partition "$partition" ext4
 e2label "$partition" "arch_os"
@@ -99,5 +100,5 @@ export kernel_partition=$partition
 select_partition "Boot partition: "
 wipe_partition "$partition" fat
 fatlabel "$partition" "boot"
-mount --mkdir "$partition" "$mount_path/boot"
+mount --mkdir "$partition" "$mount_boot_path"
 export boot_partition=$partition

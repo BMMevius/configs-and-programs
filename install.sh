@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source "$(dirname "$0")/utils.sh"
+source "$(dirname "$0")/disk.sh"
 
 echo "What will be your username?"
 read -r username
@@ -36,22 +37,16 @@ while true; do
     fi
 done
 
-source "$(dirname "$0")"/disk.sh
-
 cp "$(dirname "$0")/filesystem/etc/pacman.conf" /etc/pacman.conf
 
 echo "Ensure the system clock is accurate..."
 timedatectl set-ntp true
 
-echo "Updating package keyring..."
-pacman-key --populate archlinux
-pacman-key --refresh-keys
-
 echo "Install packages..."
 pacstrap -K "$mount_path" "${packages[@]}" --disable-download-timeout
 
 echo "Generate an fstab file..."
-genfstab -L "$mount_path" >>"$mount_path/etc/fstab"
+genfstab -U "$mount_path" >>"$mount_path/etc/fstab"
 
 echo "Setting time zone..."
 arch-chroot "$mount_path" ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
@@ -109,4 +104,3 @@ arch-chroot "$mount_path" chsh -s "$(which zsh)"
 echo "Copying user files..."
 rm -rf "$mount_path/home/$username"/.zshrc.*
 rsync -a /tmp/user-home/ "$mount_path/home/$username"
-arch-chroot "$mount_path" chown -R "$username:$username" "/home/$username"
