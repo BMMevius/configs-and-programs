@@ -69,7 +69,7 @@ while true; do
 done
 
 echo "Copying files..."
-rsync -a /tmp/filesystem/ "$mount_path"
+rsync -a "$tmp_filesystem" "$mount_path"
 
 echo "Installing yay AUR manager..."
 yay_dir="/home/$username/aur/yay"
@@ -103,4 +103,4 @@ arch-chroot "$mount_path" chsh -s "$(which zsh)"
 
 echo "Copying user files..."
 rm -rf "$mount_path/home/$username"/.zshrc.*
-rsync -a /tmp/user-home/ "$mount_path/home/$username"
+rsync -a "$tmp_user_home" "$mount_path/home/$username"
