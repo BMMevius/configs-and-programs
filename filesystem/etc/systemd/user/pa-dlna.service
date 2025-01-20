@@ -1,0 +1,15 @@
+[Unit]
+Description=Pulseaudio or Pipewire DLNA Service
+After=network.target
+Requires=wireplumber.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pa-dlna
+Restart=on-failure
+RestartSec=5
+Slice=session.slice
+SyslogIdentifier=%n
+
+[Install]
+WantedBy=default.target
