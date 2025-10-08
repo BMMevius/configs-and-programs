@@ -99,7 +99,8 @@ arch-chroot "$mount_path" su - "$username" -c "ssh-keygen"
 
 echo "Installing Oh-My-Zsh..."
 arch-chroot "$mount_path" su - "$username" -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-arch-chroot "$mount_path" chsh -s "$(which zsh)"
+arch-chroot "$mount_path" usermod --shell "$(which zsh)" "root"
+arch-chroot "$mount_path" usermod --shell "$(which zsh)" "$username"
 
 echo "Copying user files..."
 rm -rf "$mount_path/home/$username"/.zshrc.*
