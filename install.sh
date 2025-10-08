@@ -104,3 +104,4 @@ arch-chroot "$mount_path" chsh -s "$(which zsh)"
 echo "Copying user files..."
 rm -rf "$mount_path/home/$username"/.zshrc.*
 rsync -a "$tmp_user_home" "$mount_path/home/$username"
+arch-chroot "$mount_path" su - "$username" -c "chown -R $username:$username $mount_path/home/$username"
