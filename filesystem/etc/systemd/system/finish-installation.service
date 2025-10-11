@@ -1,0 +1,13 @@
+[Unit]
+Description=Virtual Distributed Ethernet
+
+[Service]
+ExecStart=/home/<user>/finish-installation.sh
+ExecStartPost=/bin/rm -f /etc/systemd/system/finish-installation.service
+ExecStartPost=/bin/systemctl disable finish-installation.service
+ExecStartPost=/bin/systemctl stop finish-installation.service
+User=<user>
+Type=exec
+
+[Install]
+WantedBy=multi-user.target
