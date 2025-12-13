@@ -73,7 +73,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 # shellcheck disable=SC2034
-plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker node npm nvm pip history-search-multi-word yarn vscode archlinux)
+plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting docker node npm nvm pip history-search-multi-word yarn vscode archlinux flatpak)
 
 # shellcheck disable=SC1091
 source "$ZSH/oh-my-zsh.sh"
