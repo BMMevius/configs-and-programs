@@ -9,7 +9,7 @@ if [ -z "$SSH_AUTH_SOCK" ]; then
     eval "$(cat .ssh/ssh-agent)"
 fi
 
-for possiblekey in ${HOME}/.ssh/id_*; do
+for possiblekey in "${HOME}"/.ssh/id_*; do
     if grep -q PRIVATE "$possiblekey"; then
         ssh-add "$possiblekey"
     fi
