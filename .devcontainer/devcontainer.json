@@ -12,7 +12,6 @@
 		"vscode": {
 			"extensions": [
 				"GitHub.vscode-pull-request-github",
-				"eamodio.gitlens",
 				"hangxingliu.vscode-systemd-support",
 				"timonwong.shellcheck",
 				"DavidAnson.vscode-markdownlint",
